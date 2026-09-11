@@ -1,0 +1,178 @@
+// ===========================================
+// RESERVATION CONTROLLER — The Heart of Plateo's Booking System
+// ===========================================
+// This replaces the FAKE booking in your ReservationForm.tsx:
+//
+// BEFORE (fake):
+//   setTimeout(() => {
+//     setBookingCode(`PLT-${randomNum}`);  // Random, meaningless, lost on refresh
+//   }, 900);
+//
+// AFTER (real):
+//   const response = await fetch('/api/reservations', { method: 'POST', body: data })
+//   → Server validates data
+//   → Server generates unique booking code
+//   → Server saves to PostgreSQL database (PERMANENT)
+//   → Server responds with real booking code
+//   → Data survives forever, visible in admin dashboard
+
+import { Request, Response } from 'express';
+import prisma from '../lib/prisma';
+
+// POST /api/reservations
+// Creates a new reservation in the database
+//
+// WHAT THE FRONTEND SENDS (in the request body):
+// {
+//   fullName: "Lady Vivienne Sterling",
+//   email: "vivienne@sterling.com",
+//   phone: "+94771234567",
+//   date: "2026-09-15",
+//   time: "07:30 PM",
+//   guests: 4,
+//   seatingArea: "verandah",
+//   occasion: "Anniversary",
+//   dietary: ["Vegetarian", "Gluten-Free"],
+//   specialRequests: "Anniversary surprise dessert"
+// }
+export const createReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Step 1: Extract data from the request body
+    // req.body contains the JSON that the frontend sent via fetch()
+    const {
+      fullName,
+      email,
+      phone,
+      date,
+      time,
+      guests,
+      seatingArea,
+      occasion,
+      dietary,
+      specialRequests,
+    } = req.body;
+
+    // Step 2: Validate the data (server-side validation)
+    // WHY validate on the server too?
+    // Because someone could bypass your React form validation by:
+    //   - Using Postman/curl to send direct API requests
+    //   - Modifying the browser's JavaScript
+    // NEVER trust data from the client!
+    const errors: Record<string, string> = {};
+
+    if (!fullName || !fullName.trim()) {
+      errors.fullName = 'Full name is required';
+    }
+    if (!email || !email.includes('@')) {
+      errors.email = 'Valid email is required';
+    }
+    if (!phone || phone.length < 8) {
+      errors.phone = 'Valid phone number is required';
+    }
+    if (!date) {
+      errors.date = 'Reservation date is required';
+    }
+    if (!time) {
+      errors.time = 'Reservation time is required';
+    }
+    if (!guests || guests < 1 || guests > 12) {
+      errors.guests = 'Guest count must be between 1 and 12';
+    }
+    if (!seatingArea) {
+      errors.seatingArea = 'Seating area is required';
+    }
+
+    // If there are validation errors, send them back immediately
+    if (Object.keys(errors).length > 0) {
+      res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors,
+      });
+      return;
+    }
+
+    // Step 3: Generate a unique booking code
+    // Format: PLT-XXXX where XXXX is a random 4-digit number
+    // We check the database to make sure it's not already taken
+    let bookingCode: string;
+    let isUnique = false;
+
+    do {
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      bookingCode = `PLT-${randomNum}`;
+      // Check if this code already exists in the database
+      const existing = await prisma.reservation.findUnique({
+        where: { bookingCode },
+      });
+      isUnique = !existing;
+    } while (!isUnique);
+
+    // Step 4: Save to the database!
+    // prisma.reservation.create() → INSERT INTO "Reservation" (full_name, email, ...) VALUES (...)
+    // This is the moment the data becomes PERMANENT
+    const reservation = await prisma.reservation.create({
+      data: {
+        bookingCode,
+        fullName: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        date,
+        time,
+        guests: Number(guests),
+        seatingArea,
+        occasion: occasion || 'Casual Evening',
+        dietary: dietary || [],
+        specialRequests: specialRequests || '',
+        status: 'confirmed',
+      },
+    });
+
+    // Step 5: Send success response back to the frontend
+    // The frontend receives this via: const data = await response.json()
+    // Then it does: setBookingCode(data.bookingCode)
+    console.log(`✅ New reservation created: ${bookingCode} for ${fullName}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Reservation confirmed successfully',
+      bookingCode: reservation.bookingCode,
+      reservationId: reservation.id,
+    });
+  } catch (error) {
+    console.error('❌ Error creating reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create reservation. Please try again.',
+    });
+  }
+};
+
+// GET /api/reservations/:code
+// Look up a reservation by its booking code (e.g., PLT-8492)
+// This could be used for a "Check My Booking" feature in the future
+export const getReservationByCode = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const code = String(req.params.code || '');
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { bookingCode: code.toUpperCase() },
+    });
+
+    if (!reservation) {
+      res.status(404).json({
+        success: false,
+        message: 'No reservation found with this booking code',
+      });
+      return;
+    }
+
+    res.json({ success: true, data: reservation });
+  } catch (error) {
+    console.error('Error looking up reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to look up reservation',
+    });
+  }
+};

@@ -1,0 +1,1333 @@
+/* ReservationForm.module.css - Plateo Ultra-Luxury Multi-Step Reservation Wizard */
+
+.wizardContainer {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(170deg, rgba(16, 13, 10, 0.95) 0%, rgba(9, 7, 5, 0.98) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  border-radius: 14px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(212, 175, 55, 0.08),
+    inset 0 0 30px rgba(232, 196, 122, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   PROGRESS HEADER
+   ========================================================================== */
+
+.progressHeader {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.stepTrack {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.stepFill {
+  height: 100%;
+  background: linear-gradient(90deg, #E8C47A 0%, #D4AF37 50%, #C29538 100%);
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.stepIndicators {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.stepNode {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: all 0.3s ease;
+}
+
+.stepNode:hover {
+  opacity: 0.8;
+}
+
+.stepActive {
+  opacity: 1;
+}
+
+.stepNum {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #E8C47A;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 196, 122, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 11, 8, 0.8);
+}
+
+.stepActive .stepNum {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #D4AF37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.stepTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #FDFBF7;
+}
+
+/* ==========================================================================
+   STEP SECTIONS & HEADINGS
+   ========================================================================== */
+
+.stepSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeInStep 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sectionPill {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #D4AF37;
+  text-transform: uppercase;
+}
+
+.stepHeading {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.stepDescription {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+
+.fieldLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #E8C47A;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.fieldSub {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: -0.2rem 0 0.75rem;
+}
+
+.fieldError {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  color: #F87171;
+  margin-top: 0.35rem;
+}
+
+/* ==========================================================================
+   STEP 1: PARTY SIZE & SEATING CARDS
+   ========================================================================== */
+
+.partySizeBox {
+  background: rgba(12, 10, 8, 0.6);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.guestCounterRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.counterBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  background: rgba(232, 196, 122, 0.08);
+  color: #E8C47A;
+  font-size: 1.4rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.counterBtn:hover {
+  background: rgba(232, 196, 122, 0.25);
+  border-color: #E8C47A;
+  color: #FFFFFF;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+  transform: scale(1.05);
+}
+
+.guestDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+}
+
+.guestNumber {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.guestText {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: #E8C47A;
+  margin-top: 0.25rem;
+}
+
+.guestPillRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.guestPill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.guestPill:hover {
+  border-color: rgba(232, 196, 122, 0.5);
+  color: #FFFFFF;
+}
+
+.activePill {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #E8C47A;
+  color: #E8C47A;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+/* Seating Grid */
+.seatingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.seatingCard {
+  position: relative;
+  background: rgba(14, 11, 8, 0.7);
+  border: 1px solid rgba(232, 196, 122, 0.22);
+  border-radius: 10px;
+  padding: 1.5rem 1.35rem;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.seatingCard:hover {
+  border-color: rgba(232, 196, 122, 0.6);
+  background: rgba(20, 16, 12, 0.85);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.12);
+}
+
+.seatingCardActive {
+  border-color: #E8C47A;
+  background: linear-gradient(160deg, rgba(28, 22, 16, 0.9) 0%, rgba(14, 11, 8, 0.95) 100%);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(212, 175, 55, 0.25),
+    inset 0 0 15px rgba(232, 196, 122, 0.05);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.cardZoneIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #E8C47A;
+  transition: transform 0.3s ease;
+}
+
+.seatingCard:hover .cardZoneIcon {
+  transform: scale(1.1);
+  color: #FFFFFF;
+}
+
+.cardBadge {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  background: rgba(212, 175, 55, 0.15);
+  color: #E8C47A;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  text-transform: uppercase;
+}
+
+.cardCapacity {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cardTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+  margin: 0 0 0.35rem;
+}
+
+.cardAtmosphere {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  color: #E8C47A;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.6rem;
+}
+
+.cardDesc {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 1.25rem;
+  flex: 1;
+}
+
+.radioIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: auto;
+}
+
+.radioDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 196, 122, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.seatingCardActive .radioDot {
+  border-color: #E8C47A;
+  background: #D4AF37;
+  box-shadow: 0 0 8px #D4AF37;
+}
+
+.radioText {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.seatingCardActive .radioText {
+  color: #E8C47A;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   STEP 2: DATE PICKER & TIME SLOTS
+   ========================================================================== */
+
+.datePickerBox {
+  background: rgba(12, 10, 8, 0.6);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quickDateRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quickDateBtn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  background: rgba(232, 196, 122, 0.06);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.quickDateBtn:hover {
+  background: rgba(232, 196, 122, 0.2);
+  border-color: #E8C47A;
+  color: #FFFFFF;
+}
+
+.dateInput {
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  background: rgba(8, 6, 5, 0.85);
+  border: 1px solid rgba(232, 196, 122, 0.35);
+  border-radius: 6px;
+  color: #FFFFFF;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dateInput:focus {
+  border-color: #E8C47A;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+}
+
+/* Time Slots */
+.timeSlotsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.serviceCategoryBlock {
+  background: rgba(14, 11, 8, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.categoryTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #E8C47A;
+  margin: 0 0 0.85rem;
+}
+
+.timePillsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.65rem;
+}
+
+.timePill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.65rem 0.5rem;
+  background: rgba(8, 6, 5, 0.8);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.timePill:hover {
+  border-color: rgba(232, 196, 122, 0.7);
+  background: rgba(20, 16, 12, 0.9);
+  transform: translateY(-2px);
+}
+
+.activeTimePill {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(184, 146, 48, 0.15) 100%);
+  border-color: #E8C47A;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+}
+
+.slotTime {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: 0.08em;
+}
+
+.activeTimePill .slotTime {
+  color: #E8C47A;
+}
+
+.slotStatus {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.15rem;
+}
+
+.statusPrime {
+  color: #F59E0B;
+  font-weight: 500;
+}
+
+.statusFast {
+  color: #EF4444;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   STEP 3: FORM INPUTS & DIETARY OPTIONS
+   ========================================================================== */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.textInput,
+.selectInput,
+.textareaInput {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(8, 6, 5, 0.85);
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  border-radius: 6px;
+  color: #FFFFFF;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.textInput:focus,
+.selectInput:focus,
+.textareaInput:focus {
+  border-color: #E8C47A;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+}
+
+.textInput::placeholder,
+.textareaInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.inputError {
+  border-color: #EF4444 !important;
+}
+
+.selectInput option {
+  background-color: #0E0C0A;
+  color: #FFFFFF;
+}
+
+.dietaryBlock {
+  background: rgba(12, 10, 8, 0.6);
+  border: 1px solid rgba(232, 196, 122, 0.18);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.dietaryPillsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dietaryPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  background: rgba(8, 6, 5, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dietaryPill:hover {
+  border-color: rgba(232, 196, 122, 0.5);
+  color: #FFFFFF;
+}
+
+.activeDietary {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: #E8C47A;
+  color: #E8C47A;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+.dietCheck {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.formGroupFull {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   NAVIGATION ACTION ROWS
+   ========================================================================== */
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.actionLeftInfo,
+.actionCenterInfo {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  color: #E8C47A;
+}
+
+.prevBtn {
+  background: transparent;
+  border: 1px solid rgba(232, 196, 122, 0.35);
+  border-radius: 9999px;
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  padding: 0.75rem 1.4rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.prevBtn:hover:not(:disabled) {
+  border-color: #E8C47A;
+  background: rgba(232, 196, 122, 0.12);
+  color: #FFFFFF;
+}
+
+.nextBtn,
+.confirmBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.85rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 50%, #B89230 100%);
+  color: #080705;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin-left: auto;
+}
+
+.nextBtn:hover,
+.confirmBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.6);
+  filter: brightness(1.08);
+}
+
+.btnArrow {
+  font-size: 0.9rem;
+  transition: transform 0.25s ease;
+}
+
+.nextBtn:hover .btnArrow,
+.confirmBtn:hover .btnArrow {
+  transform: translateX(4px);
+}
+
+.confirmBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   STEP 4: ANIMATED LUXURY CONFIRMATION TICKET PASS
+   ========================================================================== */
+
+.confirmationWrapper {
+  display: flex;
+  justify-content: center;
+  animation: ticketPopIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ticketPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ticketCard {
+  width: 100%;
+  max-width: 620px;
+  background: linear-gradient(165deg, rgba(22, 18, 14, 0.95) 0%, rgba(12, 10, 8, 0.98) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  border-radius: 12px;
+  box-shadow: 
+    0 25px 80px rgba(0, 0, 0, 0.9),
+    0 0 35px rgba(212, 175, 55, 0.15);
+  overflow: hidden;
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.75rem 2rem;
+  background: rgba(14, 11, 8, 0.8);
+  border-bottom: 1px solid rgba(232, 196, 122, 0.15);
+}
+
+.ticketBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.brandTitleText {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #FFFFFF;
+  margin-top: 0.35rem;
+}
+
+.brandSubtitleText {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  color: #E8C47A;
+}
+
+.bookingRefBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(232, 196, 122, 0.35);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+}
+
+.bookingRefLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.bookingRefCode {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #E8C47A;
+}
+
+/* Perforated Divider */
+.ticketDivider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.cutoutLeft,
+.cutoutRight {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #070605;
+  border: 1px solid rgba(232, 196, 122, 0.4);
+}
+
+.cutoutLeft {
+  left: -12px;
+  clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+}
+
+.cutoutRight {
+  right: -12px;
+  clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
+.dashedLine {
+  width: 100%;
+  height: 1px;
+  border-top: 1px dashed rgba(232, 196, 122, 0.35);
+}
+
+/* Ticket Body */
+.ticketBody {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ticketSuccessNotice {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.successIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #22C55E;
+  color: #070605;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.5);
+  flex-shrink: 0;
+}
+
+.confirmedTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #4ADE80;
+  margin: 0 0 0.2rem;
+}
+
+.confirmedSubtitle {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+.ticketGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  background: rgba(14, 11, 8, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.ticketItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.itemLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  color: #E8C47A;
+  text-transform: uppercase;
+}
+
+.itemValue {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.ticketNotesBox {
+  background: rgba(14, 11, 8, 0.4);
+  border-left: 2px solid #E8C47A;
+  padding: 0.75rem 1rem;
+}
+
+.ticketNoteText {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.25rem 0 0;
+}
+
+.conciergeReminder {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem;
+}
+
+.conciergeReminder strong {
+  color: #E8C47A;
+}
+
+/* Ticket Footer Actions */
+.ticketFooter {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: rgba(14, 11, 8, 0.8);
+  border-top: 1px solid rgba(232, 196, 122, 0.15);
+}
+
+.calendarBtn {
+  flex: 1;
+  padding: 0.85rem 1.25rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 100%);
+  color: #070605;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+  transition: all 0.25s ease;
+}
+
+.calendarBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.5);
+  filter: brightness(1.08);
+}
+
+.newBookingBtn {
+  flex: 1;
+  padding: 0.85rem 1.25rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.newBookingBtn:hover {
+  background: rgba(232, 196, 122, 0.12);
+  color: #FFFFFF;
+  border-color: #E8C47A;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .wizardContainer {
+    padding: 2rem 1.65rem;
+  }
+
+  .stepTitle {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (max-width: 768px) {
+  .wizardContainer {
+    padding: 1.5rem 1.15rem;
+    border-radius: 12px;
+  }
+
+  .progressHeader {
+    margin-bottom: 1.75rem;
+  }
+
+  .stepIndicators {
+    gap: 0.25rem;
+  }
+
+  .stepNode {
+    gap: 0.4rem;
+  }
+
+  .stepNum {
+    width: 22px;
+    height: 22px;
+    font-size: 0.64rem;
+    min-width: 22px;
+  }
+
+  .stepTitle {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stepSection {
+    gap: 1.5rem;
+  }
+
+  .partySizeBox {
+    padding: 1.15rem 0.85rem;
+    gap: 1rem;
+  }
+
+  .guestCounterRow {
+    gap: 1.25rem;
+  }
+
+  .counterBtn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  .guestNumber {
+    font-size: 2rem;
+  }
+
+  .guestPillRow {
+    gap: 0.35rem;
+  }
+
+  .guestPill {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.72rem;
+  }
+
+  .seatingGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .seatingCard {
+    padding: 1.15rem 1rem;
+  }
+
+  .cardTitle {
+    font-size: 1rem;
+  }
+
+  .cardDesc {
+    font-size: 0.78rem;
+    margin-bottom: 0.85rem;
+  }
+
+  /* Date & Time Step Mobile */
+  .datePickerBox {
+    padding: 1.15rem 0.9rem;
+  }
+
+  .quickDateRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+  }
+
+  .quickDateBtn {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.68rem;
+  }
+
+  .dateInput {
+    font-size: 16px; /* Prevents auto-zoom in mobile Safari */
+    padding: 0.75rem 0.85rem;
+    min-height: 46px;
+  }
+
+  .serviceCategoryBlock {
+    padding: 1rem 0.85rem;
+  }
+
+  .timePillsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .timePill {
+    padding: 0.55rem 0.35rem;
+    min-height: 48px;
+  }
+
+  .slotTime {
+    font-size: 0.78rem;
+  }
+
+  .slotStatus {
+    font-size: 0.58rem;
+  }
+
+  /* Step 3 Form Mobile */
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .textInput,
+  .selectInput,
+  .textareaInput {
+    font-size: 16px; /* Prevents auto-zoom in mobile Safari */
+    padding: 0.75rem 0.85rem;
+    min-height: 46px;
+  }
+
+  .dietaryBlock {
+    padding: 1rem 0.85rem;
+  }
+
+  .dietaryPillsGrid {
+    gap: 0.4rem;
+  }
+
+  .dietaryPill {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.72rem;
+    min-height: 36px;
+  }
+
+  /* Step 4 Ticket Mobile */
+  .ticketCard {
+    border-radius: 10px;
+  }
+
+  .ticketHeader {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .bookingRefBlock {
+    width: 100%;
+    align-items: flex-start;
+    box-sizing: border-box;
+  }
+
+  .ticketBody {
+    padding: 1.25rem 1rem;
+    gap: 1.15rem;
+  }
+
+  .ticketSuccessNotice {
+    padding: 0.85rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .ticketGrid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    padding: 1rem 0.85rem;
+  }
+
+  .ticketFooter {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .calendarBtn,
+  .newBookingBtn {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.85rem 1rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Action Navigation Mobile: Vertical Stack with Touch Targets */
+  .actionRow {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    align-items: stretch;
+    width: 100%;
+    padding-top: 1.25rem;
+  }
+
+  .nextBtn,
+  .confirmBtn {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+    padding: 0.9rem 1.25rem;
+    min-height: 48px;
+    font-size: 0.76rem;
+  }
+
+  .prevBtn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 0.8rem 1.25rem;
+    min-height: 44px;
+  }
+
+  .actionLeftInfo,
+  .actionCenterInfo {
+    width: 100%;
+    text-align: center;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wizardContainer {
+    padding: 1.25rem 0.85rem;
+  }
+
+  .stepHeading {
+    font-size: 1.15rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stepDescription {
+    font-size: 0.8rem;
+  }
+
+  .stepTitle {
+    display: none; /* Only show step numbers on narrow screens */
+  }
+
+  .stepNode {
+    justify-content: center;
+  }
+
+  .timePillsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .brandTitleText {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .timePillsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .guestCounterRow {
+    gap: 0.85rem;
+  }
+
+  .counterBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .guestNumber {
+    font-size: 1.75rem;
+  }
+}
+

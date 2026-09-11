@@ -1,0 +1,621 @@
+/* menu.module.css - Plateo Dedicated Full Menu Page */
+
+.menuPage {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #070605;
+  color: #FDFBF7;
+  padding: 3rem 2rem 6rem;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Ambient Gradients */
+.ambientGlowTop {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  height: 420px;
+  background: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.1) 0%, rgba(217, 98, 43, 0.05) 45%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientGlowBottom {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 350px;
+  background: radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Header Section */
+.headerSection {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 920px;
+  width: 100%;
+  margin-bottom: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navBreadcrumb {
+  align-self: flex-start;
+  margin-bottom: 2rem;
+}
+
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(232, 196, 122, 0.8);
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.breadcrumbLink:hover {
+  color: #FFFFFF;
+}
+
+.logoWrapper {
+  margin-bottom: 1.25rem;
+}
+
+.collectionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.38rem 1.1rem;
+  border-radius: 9999px;
+  background: rgba(232, 196, 122, 0.08);
+  border: 1px solid rgba(232, 196, 122, 0.28);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.badgeDiamond {
+  font-size: 0.55rem;
+  color: #D4AF37;
+}
+
+.pageTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.pageTitle span {
+  background: linear-gradient(135deg, #FFFFFF 20%, #E8C47A 65%, #C29538 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pageSubtitle {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 2.5rem;
+  max-width: 680px;
+}
+
+/* Controls (Search & Filter Pills) */
+.controlsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1.2rem;
+  color: #D4AF37;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 2.8rem 0.75rem 2.8rem;
+  background: rgba(18, 14, 11, 0.9);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 9999px;
+  color: #FFFFFF;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  outline: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
+}
+
+.searchInput:focus {
+  border-color: rgba(232, 196, 122, 0.75);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.25);
+}
+
+.clearSearchBtn {
+  position: absolute;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  line-height: 1;
+}
+
+.clearSearchBtn:hover {
+  color: #FFFFFF;
+}
+
+.filterScrollTrack {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem;
+  background: rgba(18, 14, 11, 0.85);
+  border: 1px solid rgba(232, 196, 122, 0.18);
+  border-radius: 9999px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.filterScrollTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.filterPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filterPill:hover {
+  color: #FFFFFF;
+  background: rgba(232, 196, 122, 0.1);
+  border-color: rgba(232, 196, 122, 0.25);
+}
+
+.filterPillActive {
+  background: linear-gradient(135deg, rgba(232, 196, 122, 0.22) 0%, rgba(212, 175, 55, 0.12) 100%);
+  border-color: rgba(232, 196, 122, 0.6);
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.2), inset 0 0 12px rgba(232, 196, 122, 0.1);
+}
+
+.filterCount {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filterPillActive .filterCount {
+  background: rgba(232, 196, 122, 0.3);
+  color: #E8C47A;
+}
+
+/* Grid Section */
+.gridSection {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1360px;
+  margin-bottom: 5rem;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 2rem;
+}
+
+/* Menu Card */
+.menuCard {
+  position: relative;
+  background: rgba(14, 11, 9, 0.75);
+  border: 1px solid rgba(232, 196, 122, 0.14);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.4s ease,
+              box-shadow 0.4s ease;
+  animation: cardFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuCard:hover {
+  transform: translateY(-6px);
+  border-color: rgba(232, 196, 122, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(212, 175, 55, 0.16);
+}
+
+/* Image Container */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0D0A08;
+}
+
+.cardImage {
+  object-fit: cover;
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.menuCard:hover .cardImage {
+  transform: scale(1.06);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(14, 11, 9, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* Item Badge */
+.itemBadge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 3;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  background: rgba(10, 8, 6, 0.85);
+  border: 1px solid rgba(232, 196, 122, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Card Body */
+.cardBody {
+  padding: 1.35rem 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.titlePriceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.itemName {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: #FFFFFF;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.menuCard:hover .itemName {
+  color: #E8C47A;
+}
+
+.itemPrice {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #E8C47A;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.itemDescription {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0 0 1rem;
+  flex: 1;
+}
+
+/* Tasting Note Box */
+.tastingNoteBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(232, 196, 122, 0.1);
+}
+
+.noteDiamond {
+  font-size: 0.48rem;
+  color: #D4AF37;
+}
+
+.noteText {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: rgba(232, 196, 122, 0.8);
+  font-style: italic;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 4.5rem 1.5rem;
+  background: rgba(14, 11, 9, 0.6);
+  border: 1px dashed rgba(232, 196, 122, 0.25);
+  border-radius: 12px;
+}
+
+.emptyTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 1.25rem;
+}
+
+.resetFiltersBtn {
+  padding: 0.6rem 1.4rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid rgba(232, 196, 122, 0.5);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetFiltersBtn:hover {
+  background: rgba(232, 196, 122, 0.15);
+  color: #FFFFFF;
+}
+
+/* Reservation Banner */
+.reservationBanner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(20, 16, 12, 0.85) 0%, rgba(12, 9, 7, 0.95) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(212, 175, 55, 0.05);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reservationTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  margin-bottom: 0.75rem;
+}
+
+.reservationSubtitle {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 1.75rem;
+  max-width: 550px;
+}
+
+.bannerActions {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.btnPrimary {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 50%, #B89230 100%);
+  color: #070605;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+  transition: all 0.3s ease;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 26px rgba(212, 175, 55, 0.5);
+  filter: brightness(1.08);
+}
+
+.btnSecondary {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btnSecondary:hover {
+  background: rgba(232, 196, 122, 0.1);
+  border-color: rgba(232, 196, 122, 0.8);
+  color: #FFFFFF;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .menuPage {
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  .menuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .menuPage {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .headerSection {
+    margin-bottom: 2.5rem;
+  }
+
+  .filterScrollTrack {
+    padding: 0.3rem;
+    gap: 0.45rem;
+    width: 100%;
+  }
+
+  .filterPill {
+    padding: 0.48rem 0.95rem;
+    font-size: 0.68rem;
+  }
+
+  .menuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .bannerActions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    gap: 0.85rem;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    text-align: center;
+    padding: 0.78rem 1.4rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menuPage {
+    padding: 1.75rem 1rem 3.5rem;
+  }
+
+  .menuGrid {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .cardBody {
+    padding: 1.15rem 1.15rem 1.25rem;
+  }
+
+  .itemName {
+    font-size: 0.98rem;
+  }
+
+  .itemPrice {
+    font-size: 1.05rem;
+  }
+
+  .itemDescription {
+    font-size: 0.78rem;
+  }
+}

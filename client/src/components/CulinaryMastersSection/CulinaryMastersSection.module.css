@@ -1,0 +1,860 @@
+/* CulinaryMastersSection.module.css - Plateo Culinary Masters */
+
+.mastersSection {
+  position: relative;
+  width: 100%;
+  background-color: #070605;
+  color: #FDFBF7;
+  padding: 7rem 2rem 6rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ambient Radial Lighting */
+.ambientGlowTop {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 380px;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ambientGlowBottom {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  height: 380px;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container {
+  position: relative;
+  z-index: 5;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   SECTION HEADER
+   ========================================================================== */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.logoBadge {
+  margin-bottom: 0.85rem;
+}
+
+.tagline {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: #E8C47A;
+  margin: 0 0 0.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(2.1rem, 4.2vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin: 0 0 0.85rem;
+  line-height: 1.15;
+}
+
+.goldText {
+  background: linear-gradient(135deg, #FFFFFF 15%, #E8C47A 60%, #C29538 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dividerBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 160px;
+  margin-bottom: 0.85rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7));
+}
+
+.dividerLine:last-child {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.7), transparent);
+}
+
+.diamond {
+  color: #D4AF37;
+  font-size: 0.7rem;
+}
+
+.headerSub {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  max-width: 680px;
+}
+
+/* ==========================================================================
+   MOBILE TAB SELECTOR (Hidden on Desktop)
+   ========================================================================== */
+
+.mobileTabSelector {
+  display: none;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.tabBtn {
+  flex: 1;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 13, 10, 0.8);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activeTabBtn {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(184, 146, 48, 0.1) 100%);
+  border-color: #E8C47A;
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
+}
+
+.tabName {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #E8C47A;
+}
+
+.tabRoleShort {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   CHEFS GRID
+   ========================================================================== */
+
+.chefsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  margin-bottom: 5rem;
+}
+
+.chefCard {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 3.5rem;
+  align-items: center;
+  background: linear-gradient(170deg, rgba(16, 13, 10, 0.85) 0%, rgba(9, 7, 5, 0.95) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 16px;
+  padding: 3rem 3.5rem;
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(212, 175, 55, 0.06),
+    inset 0 0 30px rgba(232, 196, 122, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.chefCard:nth-child(even) {
+  grid-template-columns: 1.35fr 1fr;
+}
+
+.chefCard:nth-child(even) .portraitWrapper {
+  order: 2;
+}
+
+.chefCard:nth-child(even) .detailsContent {
+  order: 1;
+}
+
+.chefCard:hover {
+  border-color: rgba(232, 196, 122, 0.55);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.85),
+    0 0 50px rgba(212, 175, 55, 0.15);
+  transform: translateY(-4px);
+}
+
+/* ==========================================================================
+   PORTRAIT WRAPPER & PEDESTAL
+   ========================================================================== */
+
+.portraitWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 2rem;
+}
+
+/* Corner Frame Brackets */
+.frameCornerTL,
+.frameCornerTR,
+.frameCornerBL,
+.frameCornerBR {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(232, 196, 122, 0.6);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.frameCornerTL {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.frameCornerTR {
+  top: 0;
+  right: 0;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+
+.frameCornerBL {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+
+.frameCornerBR {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Pedestal Radial Glow */
+.pedestalAura {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 320px;
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.28) 0%, rgba(184, 146, 48, 0.08) 50%, transparent 75%);
+  border-radius: 50%;
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.chefCard:hover .pedestalAura {
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.42) 0%, rgba(184, 146, 48, 0.15) 50%, transparent 75%);
+  filter: blur(15px);
+}
+
+/* Ring Arch */
+.ringArch {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 78%;
+  height: 80%;
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 200px 200px 10px 10px;
+  pointer-events: none;
+  z-index: 2;
+  transition: all 0.4s ease;
+}
+
+.chefCard:hover .ringArch {
+  border-color: rgba(232, 196, 122, 0.6);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+}
+
+.imageContainer {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.chefImage {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.9));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.chefCard:hover .chefImage {
+  transform: scale(1.03) translateY(-4px);
+}
+
+/* Floating Title Plaque */
+.portraitBadge {
+  position: relative;
+  z-index: 5;
+  margin-top: -15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.55rem 1.4rem;
+  background: rgba(12, 9, 7, 0.92);
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 175, 55, 0.2);
+  transition: all 0.3s ease;
+}
+
+.chefCard:hover .portraitBadge {
+  border-color: #E8C47A;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 22px rgba(212, 175, 55, 0.35);
+}
+
+.badgeLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #E8C47A;
+}
+
+.badgeChefName {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   CHEF DETAILS & EDITORIAL
+   ========================================================================== */
+
+.detailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.roleHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rolePill {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #E8C47A;
+  text-transform: uppercase;
+}
+
+.chefTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.chefSubtitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #E8C47A;
+  margin: 0;
+}
+
+.chefHeritage {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+/* Philosophy Quote */
+.philosophyQuote {
+  position: relative;
+  background: rgba(12, 9, 7, 0.6);
+  border-left: 2px solid #E8C47A;
+  border-radius: 0 8px 8px 0;
+  padding: 1.15rem 1.4rem 1.15rem 1.75rem;
+  margin: 0;
+}
+
+.quoteMark,
+.quoteMarkClose {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.5rem;
+  color: #E8C47A;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.quoteMark {
+  margin-right: 0.35rem;
+}
+
+.quoteMarkClose {
+  margin-left: 0.35rem;
+}
+
+.quoteText {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+  font-style: italic;
+  display: inline;
+  margin: 0;
+}
+
+/* Honors Block */
+.blockHeading {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #E8C47A;
+  text-transform: uppercase;
+  margin: 0 0 0.65rem;
+}
+
+.accoladesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.accoladeItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.goldBullet {
+  color: #E8C47A;
+  font-size: 0.6rem;
+}
+
+/* Signature Degustations */
+.dishPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.dishPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  background: rgba(14, 11, 8, 0.8);
+  border: 1px solid rgba(232, 196, 122, 0.25);
+  border-radius: 6px;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+}
+
+.dishPill:hover {
+  border-color: #E8C47A;
+  background: rgba(212, 175, 55, 0.12);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.dishIcon {
+  color: #E8C47A;
+  font-size: 0.65rem;
+}
+
+/* Specialties Badges */
+.specialtiesRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.specialtyBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 9999px;
+}
+
+.specIcon {
+  font-size: 0.85rem;
+}
+
+.specLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #E8C47A;
+}
+
+/* ==========================================================================
+   HALLMARK STATS BANNER
+   ========================================================================== */
+
+.statsBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(16, 13, 10, 0.9) 0%, rgba(10, 8, 6, 0.95) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  border-radius: 12px;
+  padding: 2.25rem 3rem;
+  margin-bottom: 4rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.statItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.statNumber {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #E8C47A;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.statLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  margin-bottom: 0.25rem;
+}
+
+.statSub {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 240px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(232, 196, 122, 0.4), transparent);
+}
+
+/* ==========================================================================
+   CTA CARD
+   ========================================================================== */
+
+.ctaWrapper {
+  width: 100%;
+}
+
+.ctaCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  background: linear-gradient(135deg, rgba(26, 20, 14, 0.85) 0%, rgba(14, 11, 8, 0.95) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.35);
+  border-radius: 12px;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.1);
+}
+
+.ctaTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ctaTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.ctaDesc {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.ctaButtonGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.ctaSecondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.85rem 1.6rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid rgba(232, 196, 122, 0.45);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.ctaSecondaryBtn:hover {
+  background: rgba(232, 196, 122, 0.15);
+  border-color: #E8C47A;
+  color: #FFFFFF;
+}
+
+.ctaPrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.8rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 100%);
+  color: #080705;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+  transition: all 0.25s ease;
+}
+
+.ctaPrimaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.55);
+  filter: brightness(1.08);
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .mastersSection {
+    padding: 5rem 1.5rem 4rem;
+  }
+
+  .chefCard {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 2.5rem 2rem;
+  }
+
+  .chefCard:nth-child(even) {
+    grid-template-columns: 1fr;
+  }
+
+  .chefCard:nth-child(even) .portraitWrapper {
+    order: 1;
+  }
+
+  .chefCard:nth-child(even) .detailsContent {
+    order: 2;
+  }
+
+  .statsBanner {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .statDivider {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(232, 196, 122, 0.4), transparent);
+  }
+
+  .ctaCard {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1.5rem;
+  }
+
+  .ctaButtonGroup {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ctaSecondaryBtn,
+  .ctaPrimaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .mastersSection {
+    padding: 4.5rem 1rem 3.5rem;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
+  }
+
+  .sectionTitle {
+    font-size: clamp(1.75rem, 6.5vw, 2.2rem);
+  }
+
+  .mobileTabSelector {
+    display: flex;
+  }
+
+  .chefCard {
+    display: none;
+    padding: 1.75rem 1.25rem;
+  }
+
+  .chefCardActiveMobile {
+    display: flex;
+    flex-direction: column;
+    animation: fadeInChef 0.4s ease;
+  }
+
+  @keyframes fadeInChef {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .portraitWrapper {
+    max-width: 320px;
+    padding-top: 1rem;
+  }
+
+  .chefImage {
+    max-height: 380px;
+  }
+
+  .chefTitle {
+    font-size: 1.5rem;
+  }
+
+  .dishPills {
+    flex-direction: column;
+  }
+
+  .dishPill {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .mastersSection {
+    padding: 3.5rem 0.65rem 2.5rem;
+  }
+
+  .tagline {
+    font-size: 0.64rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.55rem;
+  }
+
+  .portraitBadge {
+    padding: 0.45rem 1rem;
+  }
+
+  .badgeChefName {
+    font-size: 0.72rem;
+  }
+
+  .philosophyQuote {
+    padding: 0.95rem 1.15rem;
+  }
+
+  .quoteText {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,463 @@
+/* reservations.module.css - Plateo Ultra-Luxury Reservations Page */
+
+.reservationsPage {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #060504;
+  color: #FDFBF7;
+  padding: 7rem 2rem 5rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Atmospheric Vignettes & Glow Overlays */
+.topNoirGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: linear-gradient(180deg, #060504 0%, rgba(6, 5, 4, 0.8) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bottomNoirGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: linear-gradient(0deg, #060504 0%, rgba(6, 5, 4, 0.8) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ambientRadialGlow {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 450px;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.08) 0%, rgba(184, 146, 48, 0.02) 50%, transparent 75%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pageContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   HERO HEADER
+   ========================================================================== */
+
+.heroHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.logoContainer {
+  margin-bottom: 0.85rem;
+}
+
+.tagline {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: #E8C47A;
+  margin: 0 0 0.5rem;
+}
+
+.pageTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin: 0 0 0.85rem;
+  line-height: 1.15;
+}
+
+.goldText {
+  background: linear-gradient(135deg, #FFFFFF 15%, #E8C47A 60%, #C29538 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+/* Delicate Diamond Divider */
+.dividerBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 160px;
+  margin-bottom: 0.85rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7));
+}
+
+.dividerLine:last-child {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.7), transparent);
+}
+
+.diamond {
+  color: #D4AF37;
+  font-size: 0.7rem;
+}
+
+.heroSub {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* ==========================================================================
+   TWO-COLUMN CONTENT GRID
+   ========================================================================== */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+.wizardColumn {
+  width: 100%;
+}
+
+.conciergeColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==========================================================================
+   CONCIERGE CARDS
+   ========================================================================== */
+
+.conciergeCard {
+  background: linear-gradient(160deg, rgba(16, 13, 10, 0.8) 0%, rgba(10, 8, 6, 0.92) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.22);
+  border-radius: 12px;
+  padding: 1.6rem 1.4rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.conciergeCard:hover {
+  border-color: rgba(232, 196, 122, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.12);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.cardIcon {
+  font-size: 1.15rem;
+}
+
+.cardCategory {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #E8C47A;
+  text-transform: uppercase;
+}
+
+.cardTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #FFFFFF;
+  margin: 0 0 0.5rem;
+}
+
+.cardText {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 0.85rem;
+}
+
+.cardText strong {
+  color: #E8C47A;
+}
+
+.cardFooterNote {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.74rem;
+  color: rgba(232, 196, 122, 0.8);
+}
+
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.65rem;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #E8C47A;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.cardLink:hover {
+  color: #FFFFFF;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  transform: translateX(3px);
+}
+
+/* Highlight Card: Private Concierge Desk */
+.conciergeCardHighlight {
+  background: linear-gradient(160deg, rgba(26, 20, 14, 0.9) 0%, rgba(14, 11, 8, 0.95) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  border-radius: 12px;
+  padding: 1.85rem 1.5rem;
+  box-shadow: 
+    0 14px 40px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(212, 175, 55, 0.15),
+    inset 0 0 20px rgba(232, 196, 122, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.highlightHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.pulseDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22C55E;
+  box-shadow: 0 0 10px #22C55E;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+}
+
+.highlightPill {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #4ADE80;
+  text-transform: uppercase;
+}
+
+.highlightTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #FFFFFF;
+  margin: 0 0 0.5rem;
+}
+
+.highlightText {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0 0 1.25rem;
+}
+
+.contactActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.phoneActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 100%);
+  color: #070605;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+  transition: all 0.25s ease;
+}
+
+.phoneActionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  filter: brightness(1.08);
+}
+
+.whatsappActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1rem;
+  border-radius: 9999px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ADE80;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.whatsappActionBtn:hover {
+  background: rgba(34, 197, 94, 0.22);
+  border-color: #22C55E;
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .conciergeColumn {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .conciergeCardHighlight {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .reservationsPage {
+    padding: 4.5rem 1rem 3rem;
+  }
+
+  .heroHeader {
+    margin-bottom: 2rem;
+  }
+
+  .pageTitle {
+    font-size: clamp(1.75rem, 6.5vw, 2.2rem);
+    letter-spacing: 0.1em;
+  }
+
+  .conciergeColumn {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .conciergeCard {
+    padding: 1.35rem 1.15rem;
+  }
+
+  .conciergeCardHighlight {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reservationsPage {
+    padding: 4rem 0.65rem 2.5rem;
+  }
+
+  .heroHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .pageTitle {
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+
+  .tagline {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+  }
+
+  .heroSub {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+  }
+
+  .conciergeCard {
+    padding: 1.15rem 0.95rem;
+  }
+
+  .cardTitle {
+    font-size: 0.88rem;
+  }
+
+  .cardText {
+    font-size: 0.78rem;
+  }
+
+  .phoneActionBtn,
+  .whatsappActionBtn {
+    min-height: 44px;
+    font-size: 0.66rem;
+  }
+}
+
+

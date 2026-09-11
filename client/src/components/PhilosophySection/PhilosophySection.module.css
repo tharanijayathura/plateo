@@ -1,0 +1,336 @@
+/* PhilosophySection.module.css - Plateo Brand Philosophy Section */
+
+.philosophySection {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #070605;
+  color: #FDFBF7;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   FULL BACKGROUND IMAGE & CINEMATIC FADES
+   ========================================================================== */
+
+.bgImageWrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bgImage {
+  object-fit: cover;
+  object-position: left center;
+  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.topNoirGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 260px;
+  background: linear-gradient(
+    180deg,
+    #070605 0%,
+    #070605 25%,
+    rgba(7, 6, 5, 0.92) 50%,
+    rgba(7, 6, 5, 0.6) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bottomNoirGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: linear-gradient(0deg, #070605 0%, rgba(7, 6, 5, 0.7) 45%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rightBlackFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(7, 6, 5, 0.15) 35%,
+    rgba(7, 6, 5, 0.75) 55%,
+    rgba(7, 6, 5, 0.95) 75%,
+    #070605 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   CONTENT CONTAINER: POSITIONED ON THE RIGHT BLACK HALF
+   ========================================================================== */
+
+.contentContainer {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1400px;
+  padding: 5rem 5vw;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.textBlock {
+  max-width: 520px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Monogram Logo */
+.logoBadge {
+  margin-bottom: 1.5rem;
+}
+
+/* Section Heading */
+.sectionTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: 0.12em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.titleGold {
+  background: linear-gradient(135deg, #FFFFFF 15%, #E8C47A 60%, #C29538 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+/* Diamond Divider */
+.dividerBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 220px;
+  margin-bottom: 2rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7));
+}
+
+.dividerLine:last-child {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.7), transparent);
+}
+
+.diamond {
+  color: #D4AF37;
+  font-size: 0.75rem;
+}
+
+/* Highlight Lead Quote */
+.leadQuote {
+  margin-bottom: 1.75rem;
+}
+
+.leadLine {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: #E8C47A;
+  margin: 0;
+}
+
+/* Narrative Text */
+.narrative {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: clamp(0.92rem, 1.15vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.82;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-width: 480px;
+}
+
+.narrative p {
+  margin: 0;
+}
+
+/* CTA Story Button */
+.actionWrapper {
+  margin-top: 0.25rem;
+}
+
+.storyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 2.2rem;
+  border-radius: 4px;
+  background: rgba(14, 11, 8, 0.6);
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  color: #E8C47A;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.storyBtn:hover {
+  background: rgba(232, 196, 122, 0.15);
+  border-color: rgba(232, 196, 122, 0.85);
+  color: #FFFFFF;
+  box-shadow: 0 6px 28px rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.arrowIcon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.storyBtn:hover .arrowIcon {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Tablets & Mobile)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .philosophySection {
+    min-height: 85vh;
+  }
+
+  .contentContainer {
+    padding: 4.5rem 4vw;
+  }
+
+  .textBlock {
+    max-width: 480px;
+  }
+
+  .rightBlackFade {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(7, 6, 5, 0.35) 25%,
+      rgba(7, 6, 5, 0.85) 50%,
+      rgba(7, 6, 5, 0.98) 75%,
+      #070605 100%
+    );
+  }
+}
+
+@media (max-width: 768px) {
+  .philosophySection {
+    min-height: auto;
+    padding: 4.5rem 1.5rem 4.5rem;
+  }
+
+  .bgImage {
+    object-position: center;
+    opacity: 0.35;
+  }
+
+  .topNoirGradient {
+    height: 120px;
+  }
+
+  .rightBlackFade {
+    background: radial-gradient(
+      circle at center,
+      rgba(7, 6, 5, 0.7) 0%,
+      rgba(7, 6, 5, 0.95) 75%,
+      #070605 100%
+    );
+  }
+
+  .contentContainer {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .textBlock {
+    max-width: 100%;
+  }
+
+  .sectionTitle {
+    font-size: 2.1rem;
+    letter-spacing: 0.08em;
+  }
+
+  .leadLine {
+    font-size: 1.05rem;
+  }
+
+  .narrative {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .storyBtn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .philosophySection {
+    padding: 3.5rem 1.25rem 3.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.75rem;
+    letter-spacing: 0.06em;
+  }
+
+  .leadLine {
+    font-size: 0.95rem;
+  }
+
+  .narrative {
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+
+  .storyBtn {
+    padding: 0.78rem 1.6rem;
+    font-size: 0.72rem;
+  }
+}
+

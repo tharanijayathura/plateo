@@ -1,0 +1,686 @@
+/* InteractivePlateShowcase.module.css */
+
+.showcaseContainer {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, #100E0D 0%, #080706 60%, #000000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* Seamless Seam Gradients */
+.topNoirSeam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22vh;
+  background: linear-gradient(
+    to bottom,
+    #0C0A09 0%,
+    rgba(12, 10, 9, 0.85) 30%,
+    rgba(12, 10, 9, 0.35) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 30;
+}
+
+.bottomNoirSeam {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22vh;
+  background: linear-gradient(
+    to top,
+    #0C0A09 0%,
+    rgba(12, 10, 9, 0.85) 30%,
+    rgba(12, 10, 9, 0.35) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 30;
+}
+
+/* ==========================================================================
+   LAYER 1: Rotating Plate Video (Slides Right when Transitioning to Dish)
+   ========================================================================== */
+
+.videoLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  will-change: transform, opacity;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s ease;
+}
+
+.videoActive {
+  transform: translateX(0) translateZ(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.videoExit {
+  transform: translateX(110%) translateZ(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.videoVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(12, 10, 9, 0.05) 0%,
+    rgba(12, 10, 9, 0.35) 65%,
+    rgba(12, 10, 9, 0.88) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   LAYER 2: Interactive Dish Feature (Pops In on Right Side of Screen)
+   ========================================================================== */
+
+.interactiveDishLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 5vw;
+  box-sizing: border-box;
+  will-change: transform, opacity;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s ease;
+}
+
+.dishActive {
+  transform: translateX(0) scale(1) translateZ(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dishHidden {
+  transform: translateX(90px) scale(0.92) translateZ(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+  gap: 3.5rem;
+  z-index: 5;
+}
+
+/* Left Side Editorial Story */
+.storyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 5;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease;
+}
+
+.collectionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: #D4AF37;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.storyTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+  font-weight: 500;
+  color: #F7E7CE;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.25rem 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+}
+
+.storyTitle span {
+  color: #D4AF37;
+  font-weight: 600;
+}
+
+.storyText {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: clamp(0.85rem, 1.1vw, 0.98rem);
+  line-height: 1.7;
+  color: rgba(240, 230, 215, 0.78);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin: 0 0 1.75rem 0;
+  max-width: 460px;
+}
+
+.interactiveHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 1rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 4px;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: #E8C47A;
+}
+
+.hintDiamond {
+  color: #D4AF37;
+  font-size: 0.75rem;
+}
+
+/* Right Side: Interactive Plate Rig */
+.dishRightContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.rig {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  aspect-ratio: 1536 / 1024;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.glow {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  width: 65%;
+  height: 24%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(217, 98, 43, 0.42) 0%, rgba(212, 175, 55, 0.15) 40%, rgba(217, 98, 43, 0.0) 70%);
+  filter: blur(28px);
+  animation: pulseGlow 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+.plateImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.94))
+          drop-shadow(0 45px 70px rgba(0, 0, 0, 0.75));
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ---- Ambient Particle Engine ---- */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.sparkWrap {
+  position: absolute;
+  animation-name: drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.spark {
+  border-radius: 50%;
+  background: radial-gradient(circle, #e8c47a 0%, #c99a4b 45%, transparent 75%);
+  opacity: 0;
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--dx, 20px), var(--dy, -20px));
+  }
+}
+
+.riser {
+  position: absolute;
+  bottom: 35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e8c47a 0%, #d9622b 60%, transparent 80%);
+  opacity: 0;
+  animation-name: riseUp;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes riseUp {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  15% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), var(--dy, -80px)) scale(1.15);
+  }
+}
+
+/* ---- Ingredient Hotspots ---- */
+.hotspotLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: auto;
+}
+
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  z-index: 16;
+  touch-action: manipulation;
+}
+
+.hotspot:focus,
+.hotspot:focus-visible {
+  outline: none;
+}
+
+.ingredientPopup {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, calc(-100% - 14px)) translateY(6px);
+  padding: 9px 18px;
+  background: rgba(14, 11, 8, 0.96);
+  border: 1px solid rgba(232, 196, 122, 0.65);
+  border-radius: 6px;
+  color: #F3E4C2;
+  font-family: var(--font-cinzel, var(--font-dm-serif, 'Georgia', serif));
+  font-style: italic;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 18px rgba(212, 175, 55, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: 90vw;
+}
+
+.ingredientPopup.show {
+  opacity: 1;
+  transform: translate(-50%, calc(-100% - 14px)) translateY(0);
+}
+
+/* ==========================================================================
+   PHASE CONTROLS (Pills at Bottom Center)
+   ========================================================================== */
+
+.phaseControls {
+  position: absolute;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.38rem 0.75rem;
+  background: rgba(14, 11, 8, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 35;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.75);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.phaseBtn {
+  background: transparent;
+  border: none;
+  color: rgba(240, 230, 215, 0.65);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.phaseNum {
+  color: #D4AF37;
+  font-weight: 600;
+}
+
+.phaseBtn:hover,
+.phaseBtn:active {
+  color: #F7E7CE;
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.activePhaseBtn {
+  color: #0C0A09 !important;
+  background: #D4AF37 !important;
+  font-weight: 600;
+}
+
+.activePhaseBtn .phaseNum {
+  color: #0C0A09;
+}
+
+.phaseDivider {
+  color: rgba(212, 175, 55, 0.5);
+  font-size: 0.65rem;
+}
+
+/* ---- Cursor Sparkle Trail & Click Bursts ---- */
+.sparkleLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.sparkle {
+  position: absolute;
+  background: radial-gradient(circle, #FFF9E6 0%, #E8C47A 40%, #C99A4B 70%, transparent 85%);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes sparkleTrail {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1) rotate(90deg) translateY(-24px);
+  }
+}
+
+@keyframes sparkleBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+  18% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--bx, 0px)), calc(-50% + var(--by, 0px))) scale(1.15);
+  }
+}
+
+/* ==========================================================================
+   TABLET & IPAD RESPONSIVE BREAKPOINTS (769px - 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .interactiveDishLayer {
+    padding: 4rem 2rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .showcaseGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    max-width: 640px;
+    text-align: center;
+  }
+
+  .storyContent {
+    align-items: center;
+    text-align: center;
+  }
+
+  .storyTitle {
+    font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .storyText {
+    font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+    max-width: 520px;
+    margin-bottom: 0.85rem;
+  }
+
+  .interactiveHint {
+    font-size: 0.62rem;
+    padding: 0.35rem 0.85rem;
+  }
+
+  .dishRightContainer {
+    width: 100%;
+  }
+
+  .rig {
+    max-width: min(88vw, 540px);
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================================================
+   MOBILE PHONES RESPONSIVE BREAKPOINTS (max-width: 768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .topNoirSeam,
+  .bottomNoirSeam {
+    height: 15vh;
+  }
+
+  .interactiveDishLayer {
+    padding: 3.5rem 1.25rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    justify-content: space-evenly;
+  }
+
+  .showcaseGrid {
+    gap: 0.65rem;
+    max-width: 100%;
+  }
+
+  .collectionBadge {
+    font-size: 0.56rem;
+    letter-spacing: 0.22em;
+    margin-bottom: 0.35rem;
+  }
+
+  .storyTitle {
+    font-size: 1.35rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+
+  .storyText {
+    font-size: 0.74rem;
+    line-height: 1.45;
+    max-width: 92vw;
+    margin-bottom: 0.5rem;
+  }
+
+  .interactiveHint {
+    font-size: 0.56rem;
+    padding: 0.28rem 0.65rem;
+    letter-spacing: 0.12em;
+  }
+
+  .rig {
+    max-width: min(92vw, 420px);
+  }
+
+  .ingredientPopup {
+    font-size: 12px;
+    padding: 7px 14px;
+    max-width: 82vw;
+    white-space: normal;
+    text-align: center;
+    border-radius: 6px;
+    border-color: rgba(232, 196, 122, 0.7);
+    background: rgba(14, 11, 8, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 12px rgba(212, 175, 55, 0.25);
+  }
+
+  .phaseControls {
+    bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.35rem 0.65rem;
+    gap: 0.45rem;
+  }
+
+  .phaseBtn {
+    font-size: 0.56rem;
+    padding: 0.3rem 0.55rem;
+    letter-spacing: 0.08em;
+  }
+
+  .phaseDivider {
+    font-size: 0.55rem;
+  }
+}
+
+/* ==========================================================================
+   COMPACT MOBILE PHONES (iPhone SE, Small Android, max-width: 480px)
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .interactiveDishLayer {
+    padding: 3.2rem 0.75rem calc(4.2rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .storyTitle {
+    font-size: 1.2rem;
+  }
+
+  .storyText {
+    font-size: 0.7rem;
+    line-height: 1.4;
+    max-width: 94vw;
+    margin-bottom: 0.35rem;
+  }
+
+  .interactiveHint {
+    font-size: 0.52rem;
+    padding: 0.25rem 0.55rem;
+  }
+
+  .rig {
+    max-width: 96vw;
+  }
+
+  .hotspot {
+    width: 22% !important;
+    height: 22% !important;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .phaseBtn {
+    font-size: 0.52rem;
+    padding: 0.26rem 0.45rem;
+  }
+}

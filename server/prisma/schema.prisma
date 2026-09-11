@@ -1,0 +1,93 @@
+// ===========================================
+// PRISMA SCHEMA — The Database Blueprint
+// ===========================================
+// This file defines ALL the tables in your PostgreSQL database.
+// Each "model" = one table. Each field = one column.
+// 
+// After editing this file, run:
+//   npx prisma db push    → Creates/updates tables in the database
+//   npx prisma generate   → Updates the TypeScript client so you get autocomplete
+//
+// WHY Prisma?
+// Instead of writing raw SQL like:
+//   INSERT INTO reservations (full_name, email, ...) VALUES ('John', 'john@email.com', ...)
+// You write TypeScript like:
+//   prisma.reservation.create({ data: { fullName: 'John', email: 'john@email.com' } })
+// Prisma translates your TypeScript into SQL automatically!
+
+// This tells Prisma to generate a TypeScript client
+generator client {
+  provider = "prisma-client-js"
+}
+
+// This tells Prisma WHERE your database is and WHAT TYPE it is
+// The URL comes from your .env file (never hardcoded!)
+datasource db {
+  provider = "postgresql"    // We're using PostgreSQL (not MongoDB, not MySQL)
+  url      = env("DATABASE_URL")  // Reads from .env file
+}
+
+// ===========================================
+// TABLE 1: Menu Items
+// ===========================================
+// Currently your menu items are hardcoded in client/src/data/menuData.ts
+// We're moving them to the database so they can be:
+//   - Updated without redeploying the website
+//   - Managed by an admin panel in the future
+//   - Filtered/searched efficiently by the database engine
+model MenuItem {
+  id          String   @id @default(cuid())  // Primary key — unique ID auto-generated
+  name        String                          // "Lobster Thermidor & Wagyu Sirloin"
+  category    String                          // "breakfast", "lunch", "dinner", "desserts", "drinks"
+  price       String                          // "$88" (stored as string to keep $ sign)
+  description String                          // Full dish description
+  badge       String?                         // Optional badge like "Chef Crown" (? means nullable)
+  image       String                          // Image path like "/images/menu images/..."
+  tastingNote String?                         // Optional: "Decadent • Oceanic • Rich"
+  rating      Float?                          // Optional: 5.0, 4.9, etc.
+  reviewCount Int?                            // Optional: 242, 198, etc.
+  featured    Boolean  @default(false)        // Is this a featured/highlighted item?
+  createdAt   DateTime @default(now())        // Automatically set to current time when created
+}
+
+// ===========================================
+// TABLE 2: Reservations
+// ===========================================
+// This stores every table booking that guests submit through your website.
+// Currently your ReservationForm.tsx fakes it with setTimeout().
+// Now it will be saved permanently in the database!
+model Reservation {
+  id              String   @id @default(cuid())   // Unique ID
+  bookingCode     String   @unique                 // "PLT-8492" — must be unique across all bookings
+  fullName        String                            // Guest's full name
+  email           String                            // Guest's email address
+  phone           String                            // Guest's phone number
+  date            String                            // "2026-09-15" — reservation date
+  time            String                            // "07:30 PM" — reservation time
+  guests          Int                               // Number of guests (1-12)
+  seatingArea     String                            // "main", "counter", "verandah", "private"
+  occasion        String                            // "Birthday Celebration", "Romantic Date", etc.
+  dietary         String[]                          // Array: ["Vegetarian", "Nut Allergy"]
+  specialRequests String   @default("")             // Free text for special requests
+  status          String   @default("confirmed")    // "confirmed", "cancelled", "completed"
+  createdAt       DateTime @default(now())          // When the booking was made
+}
+
+// ===========================================
+// TABLE 3: Contact Messages
+// ===========================================
+// Stores every contact form submission from the /contact page.
+// Currently it just plays a wax-seal animation and goes nowhere.
+// Now the restaurant staff can actually read and respond!
+model ContactMessage {
+  id            String   @id @default(cuid())
+  referenceCode String   @unique                // "CORR-8924" — unique reference
+  name          String                           // Sender's name
+  email         String                           // Sender's email
+  phone         String   @default("")            // Optional phone number
+  department    String                           // "dining", "culinary", "press", "concierge"
+  replyMethod   String                           // "email", "whatsapp", "call"
+  message       String                           // The actual message content
+  status        String   @default("new")         // "new", "read", "replied"
+  createdAt     DateTime @default(now())         // When the message was sent
+}

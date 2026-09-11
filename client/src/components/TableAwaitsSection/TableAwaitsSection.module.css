@@ -1,0 +1,145 @@
+/* TableAwaitsSection.module.css - Expanded Low-Height Editorial Section */
+
+.tableAwaitsSection {
+  position: relative;
+  width: 100%;
+  padding: 6.5rem 2.5rem;
+  background-color: #070605;
+  color: #FDFBF7;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+/* Ambient Subtle Glow */
+.ambientGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 220px;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   EXPANDED CONTENT CONTAINER
+   ========================================================================== */
+
+.contentContainer {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.categoryLabel {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: #E8C47A;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+}
+
+.titleGold {
+  background: linear-gradient(135deg, #FFFFFF 15%, #E8C47A 60%, #C29538 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+/* Narrative Copy */
+.narrativeBlock {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: clamp(0.92rem, 1.2vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 0;
+  max-width: 860px;
+}
+
+.narrativeBlock p {
+  margin: 0;
+}
+
+.subNarrativeLink {
+  color: #E8C47A;
+  font-weight: 400;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.subNarrativeLink:hover {
+  color: #FFFFFF;
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .tableAwaitsSection {
+    padding: 3rem 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.65rem;
+    letter-spacing: 0.08em;
+  }
+
+  .narrativeBlock {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1.35rem;
+  }
+
+  .reserveBtn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tableAwaitsSection {
+    padding: 2.5rem 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.45rem;
+    letter-spacing: 0.06em;
+  }
+
+  .narrativeBlock {
+    font-size: 0.82rem;
+  }
+}

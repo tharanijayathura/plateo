@@ -1,0 +1,58 @@
+.button {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover animation: subtle scale */
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Primary Variant: Gold background */
+.primary {
+  background-color: #C9A96E;
+  color: #FAFAF7;
+}
+
+.primary:hover {
+  background-color: #b5955b;
+  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.3);
+}
+
+/* Secondary Variant: Outlined */
+.secondary {
+  background-color: transparent;
+  color: #2C2C2C;
+  border-color: #2C2C2C;
+}
+
+.secondary:hover {
+  background-color: #2C2C2C;
+  color: #FAFAF7;
+}
+
+/* Text Variant: No background/border */
+.text {
+  background-color: transparent;
+  color: #C9A96E;
+  padding: 0.5rem 1rem;
+}
+
+.text:hover {
+  background-color: rgba(201, 169, 110, 0.1);
+  transform: none; /* Override the transform for text buttons */
+}

@@ -1,0 +1,78 @@
+.card {
+  background-color: #FAFAF7; /* off-white */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* CSS-only hover effect for lifting the card */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.imageArea {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: #e0e0e0;
+}
+
+.placeholderArea {
+  height: 200px;
+  background-color: #8B9D83; /* soft sage */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categoryLabel {
+  color: #FAFAF7;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.name {
+  font-family: var(--font-dm-serif, 'DM Serif Display', serif);
+  font-size: 1.25rem;
+  color: #2C2C2C;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.price {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-weight: 600;
+  color: #C9A96E; /* gold accent */
+  font-size: 1.125rem;
+}
+
+.description {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  margin: 0;
+}
