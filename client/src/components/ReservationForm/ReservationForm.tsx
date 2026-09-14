@@ -248,6 +248,42 @@ export default function ReservationForm() {
 
   return (
     <div className={styles.wizardContainer}>
+      {/* Banner to Edit or Remove Existing Reservation */}
+      {step < 4 && (
+        <div style={{
+          background: 'rgba(232, 196, 122, 0.08)',
+          border: '1px solid rgba(232, 196, 122, 0.25)',
+          borderRadius: '8px',
+          padding: '0.75rem 1rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}>
+          <span style={{ fontSize: '0.8rem', color: 'rgba(247, 243, 233, 0.7)' }}>
+            Already booked a table?
+          </span>
+          <Link
+            href="/reservations/manage"
+            style={{
+              color: '#E8C47A',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textDecoration: 'none',
+              background: 'rgba(232, 196, 122, 0.15)',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '6px',
+              border: '1px solid rgba(232, 196, 122, 0.4)',
+            }}
+          >
+            ✎ EDIT OR REMOVE RESERVATION &rarr;
+          </Link>
+        </div>
+      )}
+
       {/* Wizard Header Progress Bar (Steps 1 to 3) */}
       {step < 4 && (
         <div className={styles.progressHeader}>
