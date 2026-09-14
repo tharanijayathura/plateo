@@ -148,20 +148,68 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
   }
 };
 
+// GET /api/reservations
+// Returns all reservations (or filtered by email/search) for customer self-service view
+export const getAllPublicReservations = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, search } = req.query;
+    const where: Record<string, unknown> = {};
+
+    if (email) {
+      where.email = String(email).trim().toLowerCase();
+    }
+
+    const reservations = await prisma.reservation.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // If search filter is provided, filter in memory for name/code/email/date
+    let filtered = reservations;
+    if (search) {
+      const q = String(search).trim().toLowerCase();
+      filtered = reservations.filter(
+        (r) =>
+          r.fullName.toLowerCase().includes(q) ||
+          r.email.toLowerCase().includes(q) ||
+          r.bookingCode.toLowerCase().includes(q) ||
+          r.date.includes(q)
+      );
+    }
+
+    res.json({
+      success: true,
+      count: filtered.length,
+      data: filtered,
+    });
+  } catch (error) {
+    console.error('Error fetching public reservations:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch reservations',
+    });
+  }
+};
+
 // GET /api/reservations/:code
 // Look up a reservation by its booking code (e.g., PLT-8492)
 export const getReservationByCode = async (req: Request, res: Response): Promise<void> => {
   try {
     const code = String(req.params.code || '');
 
-    const reservation = await prisma.reservation.findUnique({
-      where: { bookingCode: code.toUpperCase() },
+    const reservation = await prisma.reservation.findFirst({
+      where: {
+        OR: [
+          { bookingCode: code.toUpperCase() },
+          { id: code },
+        ],
+      },
     });
 
     if (!reservation) {
       res.status(404).json({
         success: false,
-        message: 'No reservation found with this booking code',
+        message: 'No reservation found with this code or ID',
       });
       return;
     }
@@ -177,7 +225,7 @@ export const getReservationByCode = async (req: Request, res: Response): Promise
 };
 
 // POST /api/reservations/lookup
-// Secure lookup by Booking Code + Email verification for customers
+// Lookup by Booking Code + Email
 export const lookupReservation = async (req: Request, res: Response): Promise<void> => {
   try {
     const { bookingCode, email } = req.body;
@@ -205,7 +253,6 @@ export const lookupReservation = async (req: Request, res: Response): Promise<vo
       return;
     }
 
-    // Verify email matches to protect customer privacy
     if (reservation.email.toLowerCase() !== cleanEmail) {
       res.status(401).json({
         success: false,
@@ -224,14 +271,14 @@ export const lookupReservation = async (req: Request, res: Response): Promise<vo
   }
 };
 
-// PUT /api/reservations/:code
-// Customer edit endpoint — requires email verification
+// PUT /api/reservations/:idOrCode
+// Customer edit endpoint — updates by ID or Booking Code
 export const customerEditReservation = async (req: Request, res: Response): Promise<void> => {
   try {
-    const code = String(req.params.code || '').trim().toUpperCase();
+    const identifier = String(req.params.code || req.params.id || '').trim();
     const {
-      email,
       fullName,
+      email,
       phone,
       date,
       time,
@@ -239,19 +286,17 @@ export const customerEditReservation = async (req: Request, res: Response): Prom
       seatingArea,
       occasion,
       specialRequests,
+      status,
     } = req.body;
 
-    if (!email) {
-      res.status(400).json({
-        success: false,
-        message: 'Guest email is required to verify ownership',
-      });
-      return;
-    }
-
-    // Fetch existing reservation
-    const existing = await prisma.reservation.findUnique({
-      where: { bookingCode: code },
+    // Find by ID or by bookingCode
+    const existing = await prisma.reservation.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { bookingCode: identifier.toUpperCase() },
+        ],
+      },
     });
 
     if (!existing) {
@@ -262,32 +307,25 @@ export const customerEditReservation = async (req: Request, res: Response): Prom
       return;
     }
 
-    // Verify email
-    if (existing.email.toLowerCase() !== String(email).trim().toLowerCase()) {
-      res.status(401).json({
-        success: false,
-        message: 'Email address verification failed',
-      });
-      return;
-    }
-
     // Build update payload
     const updateData: Record<string, unknown> = {};
-    if (fullName) updateData.fullName = String(fullName).trim();
-    if (phone) updateData.phone = String(phone).trim();
-    if (date) updateData.date = date;
-    if (time) updateData.time = time;
-    if (guests) updateData.guests = Number(guests);
-    if (seatingArea) updateData.seatingArea = seatingArea;
-    if (occasion) updateData.occasion = occasion;
+    if (fullName !== undefined) updateData.fullName = String(fullName).trim();
+    if (email !== undefined) updateData.email = String(email).trim().toLowerCase();
+    if (phone !== undefined) updateData.phone = String(phone).trim();
+    if (date !== undefined) updateData.date = date;
+    if (time !== undefined) updateData.time = time;
+    if (guests !== undefined) updateData.guests = Number(guests);
+    if (seatingArea !== undefined) updateData.seatingArea = seatingArea;
+    if (occasion !== undefined) updateData.occasion = occasion;
     if (specialRequests !== undefined) updateData.specialRequests = specialRequests;
+    if (status !== undefined) updateData.status = status;
 
     const updated = await prisma.reservation.update({
-      where: { bookingCode: code },
+      where: { id: existing.id },
       data: updateData,
     });
 
-    console.log(`✅ Customer edited reservation: ${code}`);
+    console.log(`✅ Customer edited reservation: ${existing.bookingCode}`);
 
     res.json({
       success: true,
@@ -303,23 +341,19 @@ export const customerEditReservation = async (req: Request, res: Response): Prom
   }
 };
 
-// DELETE /api/reservations/:code
-// Customer cancel/remove endpoint — requires email verification
+// DELETE /api/reservations/:idOrCode
+// Customer cancel/remove endpoint — deletes by ID or Booking Code
 export const customerCancelReservation = async (req: Request, res: Response): Promise<void> => {
   try {
-    const code = String(req.params.code || '').trim().toUpperCase();
-    const email = String(req.query.email || req.body.email || '').trim().toLowerCase();
+    const identifier = String(req.params.code || req.params.id || '').trim();
 
-    if (!email) {
-      res.status(400).json({
-        success: false,
-        message: 'Guest email is required to verify ownership',
-      });
-      return;
-    }
-
-    const existing = await prisma.reservation.findUnique({
-      where: { bookingCode: code },
+    const existing = await prisma.reservation.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { bookingCode: identifier.toUpperCase() },
+        ],
+      },
     });
 
     if (!existing) {
@@ -330,24 +364,16 @@ export const customerCancelReservation = async (req: Request, res: Response): Pr
       return;
     }
 
-    if (existing.email.toLowerCase() !== email) {
-      res.status(401).json({
-        success: false,
-        message: 'Email address verification failed',
-      });
-      return;
-    }
-
     // Delete from database
     await prisma.reservation.delete({
-      where: { bookingCode: code },
+      where: { id: existing.id },
     });
 
-    console.log(`🗑️ Customer cancelled reservation: ${code}`);
+    console.log(`🗑️ Customer cancelled reservation: ${existing.bookingCode}`);
 
     res.json({
       success: true,
-      message: `Reservation ${code} has been successfully cancelled and removed`,
+      message: `Reservation ${existing.bookingCode} has been successfully cancelled and removed`,
     });
   } catch (error) {
     console.error('Error cancelling reservation:', error);
