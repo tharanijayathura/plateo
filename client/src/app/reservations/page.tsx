@@ -44,38 +44,16 @@ export default function ReservationsPage() {
           </div>
 
           {/* Mode Switcher Tabs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
+          <div className={styles.tabSwitcher}>
             <button
               onClick={() => setActiveTab('book')}
-              style={{
-                padding: '0.65rem 1.5rem',
-                background: activeTab === 'book' ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
-                border: activeTab === 'book' ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.1)',
-                color: activeTab === 'book' ? '#E8C47A' : 'rgba(255, 255, 255, 0.5)',
-                fontSize: '0.75rem',
-                letterSpacing: '0.2em',
-                fontWeight: 600,
-                borderRadius: '6px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
+              className={`${styles.tabBtn} ${activeTab === 'book' ? styles.activeTabBtn : ''}`}
             >
               ✦ BOOK A TABLE
             </button>
             <button
               onClick={() => setActiveTab('manage')}
-              style={{
-                padding: '0.65rem 1.5rem',
-                background: activeTab === 'manage' ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
-                border: activeTab === 'manage' ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.1)',
-                color: activeTab === 'manage' ? '#E8C47A' : 'rgba(255, 255, 255, 0.5)',
-                fontSize: '0.75rem',
-                letterSpacing: '0.2em',
-                fontWeight: 600,
-                borderRadius: '6px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
+              className={`${styles.tabBtn} ${activeTab === 'manage' ? styles.activeTabBtn : ''}`}
             >
               ✎ EDIT / CANCEL BOOKING
             </button>
