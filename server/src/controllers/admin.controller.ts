@@ -165,6 +165,7 @@ export const editReservation = async (req: AuthRequest, res: Response): Promise<
       dietary,
       specialRequests,
       status,
+      orderedItems,
     } = req.body;
 
     // Build update data object — only include fields that were sent
@@ -179,6 +180,7 @@ export const editReservation = async (req: AuthRequest, res: Response): Promise<
     if (occasion !== undefined) updateData.occasion = occasion;
     if (dietary !== undefined) updateData.dietary = dietary;
     if (specialRequests !== undefined) updateData.specialRequests = specialRequests;
+    if (orderedItems !== undefined) updateData.orderedItems = orderedItems;
     if (status !== undefined) {
       const validStatuses = ['confirmed', 'cancelled', 'completed'];
       if (!validStatuses.includes(status)) {

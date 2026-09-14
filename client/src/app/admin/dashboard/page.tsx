@@ -18,6 +18,7 @@ interface Reservation {
   occasion: string;
   dietary: string[];
   specialRequests: string;
+  orderedItems?: Array<{ id: string; name: string; category: string; price: string; quantity: number }>;
   status: string;
   createdAt: string;
 }
@@ -363,7 +364,14 @@ export default function AdminDashboard() {
                         <td style={s.td}>{r.time}</td>
                         <td style={s.td}>{r.guests}</td>
                         <td style={s.td}>{r.seatingArea}</td>
-                        <td style={s.td}>{r.occasion}</td>
+                        <td style={s.td}>
+                          <div>{r.occasion}</div>
+                          {Array.isArray(r.orderedItems) && r.orderedItems.length > 0 && (
+                            <div style={{ fontSize: '10px', color: '#b88e4a', marginTop: '2px' }}>
+                              🍷 {r.orderedItems.reduce((acc, i) => acc + i.quantity, 0)} meals/drinks pre-ordered
+                            </div>
+                          )}
+                        </td>
                         <td style={s.td}>
                           <span
                             style={{

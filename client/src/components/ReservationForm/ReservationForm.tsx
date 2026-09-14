@@ -3,6 +3,7 @@
 import React, { useState, useId } from 'react';
 import Link from 'next/link';
 import PlateoLogo from '@/components/PlateoLogo/PlateoLogo';
+import { ALL_MENU_ITEMS, MenuItem } from '@/data/menuData';
 import styles from './ReservationForm.module.css';
 
 interface SeatingOption {
@@ -61,22 +62,14 @@ const SERVICE_SLOTS = [
     ],
   },
   {
-    category: 'TWILIGHT & SUNSET (05:30 PM – 06:30 PM)',
+    category: 'DINNER SERVICE (06:30 PM – 10:30 PM)',
     slots: [
-      { time: '05:30 PM', status: 'Available' },
-      { time: '06:00 PM', status: 'Available' },
-      { time: '06:30 PM', status: 'Prime Time' },
-    ],
-  },
-  {
-    category: 'PRIME DINNER SERVICE (07:00 PM – 10:00 PM)',
-    slots: [
-      { time: '07:00 PM', status: 'Prime Time' },
-      { time: '07:30 PM', status: 'Filling Fast' },
-      { time: '08:00 PM', status: 'Prime Time' },
+      { time: '06:30 PM', status: 'Available' },
+      { time: '07:00 PM', status: 'Filling Fast' },
+      { time: '07:30 PM', status: 'Most Popular' },
+      { time: '08:00 PM', status: 'Available' },
       { time: '08:30 PM', status: 'Available' },
       { time: '09:00 PM', status: 'Available' },
-      { time: '09:30 PM', status: 'Available' },
     ],
   },
 ];
@@ -85,18 +78,18 @@ const DIETARY_OPTIONS = [
   'Vegetarian',
   'Vegan',
   'Gluten-Free',
-  'Nut Allergy',
-  'Shellfish Allergy',
   'Dairy-Free',
-  'Halal',
-  'No Pork',
+  'Nut Allergy',
+  'Halal Certified',
+  'No Seafood',
+  'Kosher Style',
 ];
 
 const OCCASIONS = [
   'Casual Evening',
-  'Romantic Date',
   'Birthday Celebration',
   'Anniversary',
+  'Romantic Date Night',
   'Business Gathering',
   'Culinary Tasting Journey',
 ];
@@ -123,9 +116,12 @@ export default function ReservationForm() {
   const [bookingCode, setBookingCode] = useState<string>('PLT-8492');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Optional Meal & Drink Selection State
+  const [orderedItems, setOrderedItems] = useState<Record<string, number>>({});
+  const [mealCategoryFilter, setMealCategoryFilter] = useState<'all' | 'dinner' | 'lunch' | 'breakfast' | 'desserts' | 'drinks'>('all');
+
   const formId = useId();
 
-  // Quick date helper presets
   const setQuickDate = (daysAhead: number) => {
     const d = new Date();
     d.setDate(d.getDate() + daysAhead);
@@ -138,7 +134,34 @@ export default function ReservationForm() {
     );
   };
 
-  // Validation functions per step
+  // Meal & Drink counter helpers
+  const handleItemQuantityChange = (itemId: string, delta: number) => {
+    setOrderedItems((prev) => {
+      const current = prev[itemId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const copy = { ...prev };
+        delete copy[itemId];
+        return copy;
+      }
+      return { ...prev, [itemId]: next };
+    });
+  };
+
+  // Convert orderedItems record into structured array for API
+  const getStructuredOrderedItems = () => {
+    return Object.entries(orderedItems).map(([id, quantity]) => {
+      const item = ALL_MENU_ITEMS.find((m) => m.id === id);
+      return {
+        id,
+        name: item?.name || id,
+        category: item?.category || 'general',
+        price: item?.price || '$0',
+        quantity,
+      };
+    });
+  };
+
   const validateStep2 = () => {
     const newErrors: Record<string, string> = {};
     if (!date) newErrors.date = 'Please select a reservation date';
@@ -172,18 +195,6 @@ export default function ReservationForm() {
     }
   };
 
-  // ============================================================
-  // handleSubmit — NOW CONNECTS TO THE REAL BACKEND!
-  // ============================================================
-  // BEFORE: setTimeout() generated a random fake code and went nowhere
-  // AFTER:  fetch() sends data to Express server → saved to PostgreSQL
-  //
-  // The flow:
-  //   1. Validate form fields (still on frontend for instant feedback)
-  //   2. Send POST request to http://localhost:5000/api/reservations
-  //   3. Server validates again, saves to database, generates unique code
-  //   4. Response comes back with real booking code
-  //   5. Show confirmation ticket with REAL data
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateStep3()) return;
@@ -192,13 +203,12 @@ export default function ReservationForm() {
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const structuredItems = getStructuredOrderedItems();
 
-      // This is the KEY moment — sending data to the backend!
-      // fetch() makes an HTTP POST request to our Express server
       const response = await fetch(`${API_URL}/api/reservations`, {
-        method: 'POST',                                    // POST = "I want to CREATE something"
-        headers: { 'Content-Type': 'application/json' },   // Tell server we're sending JSON
-        body: JSON.stringify({                             // Convert JS object to JSON string
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           fullName,
           email,
           phone,
@@ -209,24 +219,20 @@ export default function ReservationForm() {
           occasion,
           dietary,
           specialRequests,
+          orderedItems: structuredItems,
         }),
       });
 
-      // Parse the JSON response from the server
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        // Server rejected the data (validation failed, etc.)
         alert(data.message || 'Booking failed. Please try again.');
         return;
       }
 
-      // SUCCESS! The reservation is now saved in the database!
-      // data.bookingCode is a REAL unique code from PostgreSQL, not a random number
       setBookingCode(data.bookingCode);
       setStep(4);
     } catch {
-      // Network error — server might not be running
       alert('Unable to connect to the booking server. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -240,11 +246,18 @@ export default function ReservationForm() {
     setPhone('');
     setSpecialRequests('');
     setDietary([]);
+    setOrderedItems({});
     setErrors({});
   };
 
   const selectedSeatingObj =
     SEATING_OPTIONS.find((s) => s.id === seatingArea) || SEATING_OPTIONS[0];
+
+  const filteredMenuItems = ALL_MENU_ITEMS.filter((item) =>
+    mealCategoryFilter === 'all' ? true : item.category === mealCategoryFilter
+  );
+
+  const totalPreorderedCount = Object.values(orderedItems).reduce((a, b) => a + b, 0);
 
   return (
     <div className={styles.wizardContainer}>
@@ -326,7 +339,7 @@ export default function ReservationForm() {
         </div>
       )}
 
-      {/* STEP 1: SEATING ZONE & GUESTS */}
+      {/* STEP 1: SEATING ZONE & PARTY SIZE */}
       {step === 1 && (
         <div className={styles.stepSection}>
           <div className={styles.sectionHeader}>
@@ -338,9 +351,10 @@ export default function ReservationForm() {
           </div>
 
           {/* Party Size Selector */}
-          <div className={styles.partySizeBox}>
+          <div className={styles.guestSelectorBlock}>
             <label className={styles.fieldLabel}>NUMBER OF GUESTS</label>
-            <div className={styles.guestCounterRow}>
+
+            <div className={styles.guestCounterControl}>
               <button
                 type="button"
                 className={styles.counterBtn}
@@ -350,11 +364,9 @@ export default function ReservationForm() {
                 &minus;
               </button>
 
-              <div className={styles.guestDisplay}>
-                <span className={styles.guestNumber}>{guests}</span>
-                <span className={styles.guestText}>
-                  {guests === 1 ? 'GUEST' : 'GUESTS'}
-                </span>
+              <div className={styles.counterDisplay}>
+                <span className={styles.counterNumber}>{guests}</span>
+                <span className={styles.counterLabel}>GUESTS</span>
               </div>
 
               <button
@@ -367,13 +379,12 @@ export default function ReservationForm() {
               </button>
             </div>
 
-            {/* Quick Guest Pills */}
-            <div className={styles.guestPillRow}>
+            <div className={styles.quickGuestsGrid}>
               {[1, 2, 3, 4, 5, 6, 8, 10].map((num) => (
                 <button
                   key={num}
                   type="button"
-                  className={`${styles.guestPill} ${guests === num ? styles.activePill : ''}`}
+                  className={`${styles.quickGuestBtn} ${guests === num ? styles.quickGuestActive : ''}`}
                   onClick={() => setGuests(num)}
                 >
                   {num} {num === 1 ? 'Guest' : 'Guests'}
@@ -454,95 +465,75 @@ export default function ReservationForm() {
         </div>
       )}
 
-      {/* STEP 2: DATE & TIME */}
+      {/* STEP 2: DATE & TIME SELECTION */}
       {step === 2 && (
         <div className={styles.stepSection}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionPill}>STEP 02 OF 03</span>
-            <h3 className={styles.stepHeading}>SELECT DATE &amp; SERVICE TIME</h3>
+            <h3 className={styles.stepHeading}>SELECT DATE &amp; DINING TIME</h3>
             <p className={styles.stepDescription}>
-              Reservations open 30 days in advance. Select your date and dining period.
+              Select your desired evening date and seating time slot.
             </p>
           </div>
 
-          {/* Date Selection Box */}
-          <div className={styles.datePickerBox}>
+          {/* Date Selector */}
+          <div className={styles.dateSelectorBlock}>
             <label className={styles.fieldLabel} htmlFor={`${formId}-date`}>
               RESERVATION DATE
             </label>
-
-            {/* Quick Date Presets */}
-            <div className={styles.quickDateRow}>
-              <button
-                type="button"
-                className={styles.quickDateBtn}
-                onClick={() => setQuickDate(0)}
-              >
-                Today
-              </button>
-              <button
-                type="button"
-                className={styles.quickDateBtn}
-                onClick={() => setQuickDate(1)}
-              >
-                Tomorrow
-              </button>
-              <button
-                type="button"
-                className={styles.quickDateBtn}
-                onClick={() => setQuickDate(2)}
-              >
-                In 2 Days
-              </button>
-              <button
-                type="button"
-                className={styles.quickDateBtn}
-                onClick={() => setQuickDate(7)}
-              >
-                Next Week
-              </button>
+            <div className={styles.dateInputRow}>
+              <input
+                type="date"
+                id={`${formId}-date`}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className={styles.dateInput}
+              />
+              <div className={styles.quickDatePills}>
+                <button
+                  type="button"
+                  className={styles.quickDateBtn}
+                  onClick={() => setQuickDate(1)}
+                >
+                  Tomorrow
+                </button>
+                <button
+                  type="button"
+                  className={styles.quickDateBtn}
+                  onClick={() => setQuickDate(2)}
+                >
+                  In 2 Days
+                </button>
+                <button
+                  type="button"
+                  className={styles.quickDateBtn}
+                  onClick={() => setQuickDate(7)}
+                >
+                  Next Week
+                </button>
+              </div>
             </div>
-
-            <input
-              type="date"
-              id={`${formId}-date`}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={styles.dateInput}
-              min={new Date().toISOString().split('T')[0]}
-            />
             {errors.date && <p className={styles.fieldError}>{errors.date}</p>}
           </div>
 
-          {/* Time Slots Categorized */}
-          <div className={styles.timeSlotsWrapper}>
-            <label className={styles.fieldLabel}>AVAILABLE SERVICE TIME SLOTS</label>
-
-            {SERVICE_SLOTS.map((period) => (
-              <div key={period.category} className={styles.serviceCategoryBlock}>
-                <h5 className={styles.categoryTitle}>{period.category}</h5>
-                <div className={styles.timePillsGrid}>
-                  {period.slots.map((slot) => {
+          {/* Time Slot Categories */}
+          <div className={styles.timeSlotsBlock}>
+            <label className={styles.fieldLabel}>PREFERRED SERVICE SLOT</label>
+            {SERVICE_SLOTS.map((group) => (
+              <div key={group.category} className={styles.slotGroup}>
+                <span className={styles.slotGroupTitle}>{group.category}</span>
+                <div className={styles.slotsGrid}>
+                  {group.slots.map((slot) => {
                     const isSelected = time === slot.time;
                     return (
                       <button
                         key={slot.time}
                         type="button"
-                        className={`${styles.timePill} ${isSelected ? styles.activeTimePill : ''}`}
+                        className={`${styles.slotBtn} ${isSelected ? styles.slotBtnActive : ''}`}
                         onClick={() => setTime(slot.time)}
                       >
                         <span className={styles.slotTime}>{slot.time}</span>
-                        <span
-                          className={`${styles.slotStatus} ${
-                            slot.status === 'Prime Time'
-                              ? styles.statusPrime
-                              : slot.status === 'Filling Fast'
-                              ? styles.statusFast
-                              : ''
-                          }`}
-                        >
-                          {slot.status}
-                        </span>
+                        <span className={styles.slotStatus}>{slot.status}</span>
                       </button>
                     );
                   })}
@@ -578,14 +569,14 @@ export default function ReservationForm() {
         </div>
       )}
 
-      {/* STEP 3: GUEST INFORMATION & PREFERENCES */}
+      {/* STEP 3: GUEST DETAILS, TASTING & OPTIONAL MEALS/DRINKS */}
       {step === 3 && (
         <form className={styles.stepSection} onSubmit={handleSubmit}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionPill}>STEP 03 OF 03</span>
             <h3 className={styles.stepHeading}>GUEST DETAILS &amp; TASTING PREFERENCES</h3>
             <p className={styles.stepDescription}>
-              Please provide your contact information and any dietary notes so we can personalize your evening.
+              Provide contact info and optionally pre-select meals &amp; beverages for your table.
             </p>
           </div>
 
@@ -676,6 +667,145 @@ export default function ReservationForm() {
                     <span className={styles.dietCheck}>{active ? '✓' : '+'}</span>
                     <span>{item}</span>
                   </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ============================================================ */}
+          {/* OPTIONAL: PRE-SELECT MEALS & DRINKS                          */}
+          {/* ============================================================ */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.02)',
+            border: '1px solid rgba(232, 196, 122, 0.25)',
+            borderRadius: '10px',
+            padding: '1.25rem',
+            margin: '1.5rem 0',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div>
+                <label className={styles.fieldLabel} style={{ marginBottom: '2px' }}>
+                  PRE-SELECT MEALS &amp; DRINKS (OPTIONAL)
+                </label>
+                <p className={styles.fieldSub} style={{ margin: 0 }}>
+                  Pre-order dishes or drinks for your table, or skip to order in person.
+                </p>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: totalPreorderedCount > 0 ? '#2ecc71' : '#E8C47A', fontWeight: 600 }}>
+                {totalPreorderedCount === 0
+                  ? '✦ Table Only (No Pre-order)'
+                  : `✓ ${totalPreorderedCount} Item(s) Selected`}
+              </span>
+            </div>
+
+            {/* Category Filter Pills */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+              {(['all', 'dinner', 'lunch', 'breakfast', 'desserts', 'drinks'] as const).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setMealCategoryFilter(cat)}
+                  style={{
+                    padding: '0.35rem 0.85rem',
+                    borderRadius: '20px',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: mealCategoryFilter === cat ? '1px solid #E8C47A' : '1px solid rgba(255,255,255,0.1)',
+                    background: mealCategoryFilter === cat ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
+                    color: mealCategoryFilter === cat ? '#E8C47A' : 'rgba(255,255,255,0.5)',
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Meal Items Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gap: '0.75rem',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              paddingRight: '4px',
+            }}>
+              {filteredMenuItems.map((menuItem) => {
+                const qty = orderedItems[menuItem.id] || 0;
+                return (
+                  <div
+                    key={menuItem.id}
+                    style={{
+                      background: qty > 0 ? 'rgba(232, 196, 122, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                      border: qty > 0 ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.06)',
+                      borderRadius: '8px',
+                      padding: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '0.8rem', color: '#F7F3E9', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {menuItem.name}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#E8C47A', fontWeight: 600 }}>
+                        {menuItem.price}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {qty > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleItemQuantityChange(menuItem.id, -1)}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(231,76,60,0.4)',
+                            background: 'rgba(231,76,60,0.15)',
+                            color: '#e74c3c',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '12px',
+                          }}
+                        >
+                          &minus;
+                        </button>
+                      )}
+                      {qty > 0 && (
+                        <span style={{ fontSize: '0.8rem', color: '#F7F3E9', fontWeight: 700, minWidth: '16px', textAlign: 'center' }}>
+                          {qty}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleItemQuantityChange(menuItem.id, 1)}
+                        style={{
+                          padding: qty === 0 ? '0.3rem 0.6rem' : '0',
+                          width: qty === 0 ? 'auto' : '24px',
+                          height: '24px',
+                          borderRadius: '4px',
+                          border: '1px solid rgba(232, 196, 122, 0.4)',
+                          background: 'rgba(232, 196, 122, 0.15)',
+                          color: '#E8C47A',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {qty === 0 ? '+ ADD' : '+'}
+                      </button>
+                    </div>
+                  </div>
                 );
               })}
             </div>
@@ -799,6 +929,32 @@ export default function ReservationForm() {
                 </div>
               </div>
 
+              {/* Pre-ordered items summary */}
+              <div style={{
+                background: 'rgba(232, 196, 122, 0.06)',
+                border: '1px solid rgba(232, 196, 122, 0.2)',
+                borderRadius: '6px',
+                padding: '0.75rem 1rem',
+                margin: '1rem 0',
+              }}>
+                <span className={styles.itemLabel} style={{ display: 'block', marginBottom: '0.3rem' }}>
+                  PRE-ORDERED MEALS &amp; BEVERAGES
+                </span>
+                {totalPreorderedCount === 0 ? (
+                  <span style={{ fontSize: '0.85rem', color: 'rgba(247,243,233,0.5)', fontStyle: 'italic' }}>
+                    Table Reservation Only (Dishes &amp; drinks will be ordered at your table)
+                  </span>
+                ) : (
+                  <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#F7F3E9', fontSize: '0.85rem' }}>
+                    {getStructuredOrderedItems().map((item) => (
+                      <li key={item.id}>
+                        <strong>{item.quantity}x</strong> {item.name} ({item.price})
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
               {specialRequests && (
                 <div className={styles.ticketNotesBox}>
                   <span className={styles.itemLabel}>BESPOKE REQUEST</span>
@@ -852,4 +1008,3 @@ export default function ReservationForm() {
     </div>
   );
 }
-

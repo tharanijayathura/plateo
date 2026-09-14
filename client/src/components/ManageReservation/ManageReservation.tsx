@@ -16,6 +16,7 @@ interface Reservation {
   occasion: string;
   dietary: string[];
   specialRequests: string;
+  orderedItems?: unknown;
   status: string;
   createdAt: string;
 }
@@ -300,6 +301,19 @@ export default function ManageReservation() {
                         <div className={`${styles.detailItem} ${styles.fullWidth}`}>
                           <span className={styles.detailLabel}>SPECIAL REQUESTS</span>
                           <span className={styles.detailValue}>{r.specialRequests}</span>
+                        </div>
+                      )}
+
+                      {Array.isArray(r.orderedItems) && (r.orderedItems as { id: string; name: string; price: string; quantity: number }[]).length > 0 && (
+                        <div className={`${styles.detailItem} ${styles.fullWidth}`}>
+                          <span className={styles.detailLabel}>PRE-ORDERED MEALS &amp; DRINKS</span>
+                          <div style={{ fontSize: '0.85rem', color: '#E8C47A', marginTop: '4px', display: 'flex', flexWrap: 'wrap', gap: '8px 16px' }}>
+                            {(r.orderedItems as { id: string; name: string; price: string; quantity: number }[]).map((item, idx) => (
+                              <span key={idx}>
+                                ✦ {item.quantity}x <strong>{item.name}</strong> ({item.price})
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>

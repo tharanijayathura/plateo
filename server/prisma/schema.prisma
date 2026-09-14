@@ -69,6 +69,7 @@ model Reservation {
   occasion        String                            // "Birthday Celebration", "Romantic Date", etc.
   dietary         String[]                          // Array: ["Vegetarian", "Nut Allergy"]
   specialRequests String   @default("")             // Free text for special requests
+  orderedItems    Json?                             // Optional JSON array of pre-selected meals & drinks
   status          String   @default("confirmed")    // "confirmed", "cancelled", "completed"
   createdAt       DateTime @default(now())          // When the booking was made
 }

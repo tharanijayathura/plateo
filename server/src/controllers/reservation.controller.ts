@@ -50,14 +50,10 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       occasion,
       dietary,
       specialRequests,
+      orderedItems,
     } = req.body;
 
     // Step 2: Validate the data (server-side validation)
-    // WHY validate on the server too?
-    // Because someone could bypass your React form validation by:
-    //   - Using Postman/curl to send direct API requests
-    //   - Modifying the browser's JavaScript
-    // NEVER trust data from the client!
     const errors: Record<string, string> = {};
 
     if (!fullName || !fullName.trim()) {
@@ -82,7 +78,6 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       errors.seatingArea = 'Seating area is required';
     }
 
-    // If there are validation errors, send them back immediately
     if (Object.keys(errors).length > 0) {
       res.status(400).json({
         success: false,
@@ -92,25 +87,18 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
       return;
     }
 
-    // Step 3: Generate a unique booking code
-    // Format: PLT-XXXX where XXXX is a random 4-digit number
-    // We check the database to make sure it's not already taken
     let bookingCode: string;
     let isUnique = false;
 
     do {
       const randomNum = Math.floor(1000 + Math.random() * 9000);
       bookingCode = `PLT-${randomNum}`;
-      // Check if this code already exists in the database
       const existing = await prisma.reservation.findUnique({
         where: { bookingCode },
       });
       isUnique = !existing;
     } while (!isUnique);
 
-    // Step 4: Save to the database!
-    // prisma.reservation.create() → INSERT INTO "Reservation" (full_name, email, ...) VALUES (...)
-    // This is the moment the data becomes PERMANENT
     const reservation = await prisma.reservation.create({
       data: {
         bookingCode,
@@ -124,6 +112,7 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
         occasion: occasion || 'Casual Evening',
         dietary: dietary || [],
         specialRequests: specialRequests || '',
+        orderedItems: orderedItems || [],
         status: 'confirmed',
       },
     });
@@ -287,6 +276,7 @@ export const customerEditReservation = async (req: Request, res: Response): Prom
       occasion,
       specialRequests,
       status,
+      orderedItems,
     } = req.body;
 
     // Find by ID or by bookingCode
@@ -319,6 +309,7 @@ export const customerEditReservation = async (req: Request, res: Response): Prom
     if (occasion !== undefined) updateData.occasion = occasion;
     if (specialRequests !== undefined) updateData.specialRequests = specialRequests;
     if (status !== undefined) updateData.status = status;
+    if (orderedItems !== undefined) updateData.orderedItems = orderedItems;
 
     const updated = await prisma.reservation.update({
       where: { id: existing.id },
