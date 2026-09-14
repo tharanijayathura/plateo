@@ -150,7 +150,6 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
 
 // GET /api/reservations/:code
 // Look up a reservation by its booking code (e.g., PLT-8492)
-// This could be used for a "Check My Booking" feature in the future
 export const getReservationByCode = async (req: Request, res: Response): Promise<void> => {
   try {
     const code = String(req.params.code || '');
@@ -173,6 +172,188 @@ export const getReservationByCode = async (req: Request, res: Response): Promise
     res.status(500).json({
       success: false,
       message: 'Failed to look up reservation',
+    });
+  }
+};
+
+// POST /api/reservations/lookup
+// Secure lookup by Booking Code + Email verification for customers
+export const lookupReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { bookingCode, email } = req.body;
+
+    if (!bookingCode || !email) {
+      res.status(400).json({
+        success: false,
+        message: 'Both booking code and email are required',
+      });
+      return;
+    }
+
+    const cleanCode = String(bookingCode).trim().toUpperCase();
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    const reservation = await prisma.reservation.findUnique({
+      where: { bookingCode: cleanCode },
+    });
+
+    if (!reservation) {
+      res.status(404).json({
+        success: false,
+        message: 'No reservation found with this booking code',
+      });
+      return;
+    }
+
+    // Verify email matches to protect customer privacy
+    if (reservation.email.toLowerCase() !== cleanEmail) {
+      res.status(401).json({
+        success: false,
+        message: 'The email address does not match this booking code',
+      });
+      return;
+    }
+
+    res.json({ success: true, data: reservation });
+  } catch (error) {
+    console.error('Error during customer lookup:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to find reservation',
+    });
+  }
+};
+
+// PUT /api/reservations/:code
+// Customer edit endpoint — requires email verification
+export const customerEditReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const code = String(req.params.code || '').trim().toUpperCase();
+    const {
+      email,
+      fullName,
+      phone,
+      date,
+      time,
+      guests,
+      seatingArea,
+      occasion,
+      specialRequests,
+    } = req.body;
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        message: 'Guest email is required to verify ownership',
+      });
+      return;
+    }
+
+    // Fetch existing reservation
+    const existing = await prisma.reservation.findUnique({
+      where: { bookingCode: code },
+    });
+
+    if (!existing) {
+      res.status(404).json({
+        success: false,
+        message: 'Reservation not found',
+      });
+      return;
+    }
+
+    // Verify email
+    if (existing.email.toLowerCase() !== String(email).trim().toLowerCase()) {
+      res.status(401).json({
+        success: false,
+        message: 'Email address verification failed',
+      });
+      return;
+    }
+
+    // Build update payload
+    const updateData: Record<string, unknown> = {};
+    if (fullName) updateData.fullName = String(fullName).trim();
+    if (phone) updateData.phone = String(phone).trim();
+    if (date) updateData.date = date;
+    if (time) updateData.time = time;
+    if (guests) updateData.guests = Number(guests);
+    if (seatingArea) updateData.seatingArea = seatingArea;
+    if (occasion) updateData.occasion = occasion;
+    if (specialRequests !== undefined) updateData.specialRequests = specialRequests;
+
+    const updated = await prisma.reservation.update({
+      where: { bookingCode: code },
+      data: updateData,
+    });
+
+    console.log(`✅ Customer edited reservation: ${code}`);
+
+    res.json({
+      success: true,
+      message: 'Your reservation has been updated successfully',
+      data: updated,
+    });
+  } catch (error) {
+    console.error('Error in customer edit reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update reservation',
+    });
+  }
+};
+
+// DELETE /api/reservations/:code
+// Customer cancel/remove endpoint — requires email verification
+export const customerCancelReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const code = String(req.params.code || '').trim().toUpperCase();
+    const email = String(req.query.email || req.body.email || '').trim().toLowerCase();
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        message: 'Guest email is required to verify ownership',
+      });
+      return;
+    }
+
+    const existing = await prisma.reservation.findUnique({
+      where: { bookingCode: code },
+    });
+
+    if (!existing) {
+      res.status(404).json({
+        success: false,
+        message: 'Reservation not found',
+      });
+      return;
+    }
+
+    if (existing.email.toLowerCase() !== email) {
+      res.status(401).json({
+        success: false,
+        message: 'Email address verification failed',
+      });
+      return;
+    }
+
+    // Delete from database
+    await prisma.reservation.delete({
+      where: { bookingCode: code },
+    });
+
+    console.log(`🗑️ Customer cancelled reservation: ${code}`);
+
+    res.json({
+      success: true,
+      message: `Reservation ${code} has been successfully cancelled and removed`,
+    });
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to cancel reservation',
     });
   }
 };

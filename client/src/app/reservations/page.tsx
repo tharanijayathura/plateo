@@ -1,17 +1,16 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import PlateoLogo from '@/components/PlateoLogo/PlateoLogo';
 import SmokeBackground from '@/components/SmokeBackground/SmokeBackground';
 import ReservationForm from '@/components/ReservationForm/ReservationForm';
+import ManageReservation from '@/components/ManageReservation/ManageReservation';
 import styles from './reservations.module.css';
 
-export const metadata: Metadata = {
-  title: 'Reservations | Plateo Fine Dining & Culinary Experience',
-  description:
-    'Secure your table at Plateo. Choose your preferred dining ambiance, seating zone, and bespoke tasting paired with Ceylon botanicals and open fire craft.',
-};
-
 export default function ReservationsPage() {
+  const [activeTab, setActiveTab] = useState<'book' | 'manage'>('book');
+
   return (
     <main className={styles.reservationsPage}>
       {/* Background Ambient Smoke and Cinematic Lighting Layers */}
@@ -30,7 +29,11 @@ export default function ReservationsPage() {
           <p className={styles.tagline}>RESERVATIONS &bull; COLOMBO</p>
 
           <h1 className={styles.pageTitle}>
-            SECURE YOUR <span className={styles.goldText}>TABLE</span>
+            {activeTab === 'book' ? (
+              <>SECURE YOUR <span className={styles.goldText}>TABLE</span></>
+            ) : (
+              <>MANAGE YOUR <span className={styles.goldText}>BOOKING</span></>
+            )}
           </h1>
 
           {/* Diamond Divider */}
@@ -40,16 +43,50 @@ export default function ReservationsPage() {
             <span className={styles.dividerLine} />
           </div>
 
-          <p className={styles.heroSub}>
-            FROM NATURE &bull; THROUGH FIRE &bull; TO YOU
-          </p>
+          {/* Mode Switcher Tabs */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
+            <button
+              onClick={() => setActiveTab('book')}
+              style={{
+                padding: '0.65rem 1.5rem',
+                background: activeTab === 'book' ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
+                border: activeTab === 'book' ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.1)',
+                color: activeTab === 'book' ? '#E8C47A' : 'rgba(255, 255, 255, 0.5)',
+                fontSize: '0.75rem',
+                letterSpacing: '0.2em',
+                fontWeight: 600,
+                borderRadius: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              ✦ BOOK A TABLE
+            </button>
+            <button
+              onClick={() => setActiveTab('manage')}
+              style={{
+                padding: '0.65rem 1.5rem',
+                background: activeTab === 'manage' ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
+                border: activeTab === 'manage' ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.1)',
+                color: activeTab === 'manage' ? '#E8C47A' : 'rgba(255, 255, 255, 0.5)',
+                fontSize: '0.75rem',
+                letterSpacing: '0.2em',
+                fontWeight: 600,
+                borderRadius: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              ✎ EDIT / CANCEL BOOKING
+            </button>
+          </div>
         </header>
 
         {/* Two-Column Booking & Concierge Grid */}
         <div className={styles.contentGrid}>
-          {/* Main Booking Wizard Column */}
+          {/* Main Column */}
           <div className={styles.wizardColumn}>
-            <ReservationForm />
+            {activeTab === 'book' ? <ReservationForm /> : <ManageReservation />}
           </div>
 
           {/* Concierge & Information Sidebar Column */}

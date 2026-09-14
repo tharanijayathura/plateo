@@ -1,0 +1,297 @@
+/* ManageReservation.module.css - Plateo Customer Manage Reservation Component */
+
+.manageContainer {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(170deg, rgba(16, 13, 10, 0.95) 0%, rgba(9, 7, 5, 0.98) 100%);
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  border-radius: 14px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(212, 175, 55, 0.08),
+    inset 0 0 30px rgba(232, 196, 122, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.headerTag {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(232, 196, 122, 0.7);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.headerTitle {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.65rem;
+  font-weight: 400;
+  color: #F7F3E9;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem 0;
+}
+
+.goldText {
+  color: #E8C47A;
+  background: linear-gradient(135deg, #F7F3E9 0%, #E8C47A 50%, #C29538 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.headerSub {
+  font-size: 0.85rem;
+  color: rgba(247, 243, 233, 0.55);
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Form Groups */
+.lookupForm {
+  display: flex;
+  flexDirection: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.inputLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(232, 196, 122, 0.8);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 8px;
+  color: #F7F3E9;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.inputField:focus {
+  border-color: #E8C47A;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 15px rgba(232, 196, 122, 0.15);
+}
+
+.errorBanner {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 50%, #C29538 100%);
+  border: none;
+  border-radius: 8px;
+  color: #090705;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+  margin-top: 0.5rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Reservation Details Card */
+.detailsCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 10px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.detailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bookingCodeBadge {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 1.2rem;
+  color: #E8C47A;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.statusPill {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detailLabel {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: rgba(232, 196, 122, 0.6);
+  text-transform: uppercase;
+}
+
+.detailValue {
+  font-size: 0.95rem;
+  color: #F7F3E9;
+  font-weight: 500;
+}
+
+.actionRow {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.editBtn {
+  flex: 1;
+  padding: 0.85rem;
+  background: rgba(232, 196, 122, 0.1);
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  color: #E8C47A;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editBtn:hover {
+  background: rgba(232, 196, 122, 0.2);
+  border-color: #E8C47A;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 0.85rem;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(231, 76, 60, 0.25);
+  border-color: #e74c3c;
+}
+
+.backBtn {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  color: rgba(247, 243, 233, 0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.backBtn:hover {
+  color: #E8C47A;
+}
+
+/* Edit Form Modal/Section inside card */
+.editSection {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(232, 196, 122, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.editSectionTitle {
+  font-size: 0.9rem;
+  color: #E8C47A;
+  letter-spacing: 0.15em;
+  margin: 0 0 1.25rem 0;
+  text-transform: uppercase;
+}
+
+.grid2Col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.successBanner {
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: #2ecc71;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
