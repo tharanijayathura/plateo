@@ -148,6 +148,103 @@ export const updateReservationStatus = async (req: AuthRequest, res: Response): 
   }
 };
 
+// PUT /api/admin/reservations/:id
+// Fully edits a reservation's details (date, time, guests, seating, etc.)
+export const editReservation = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const id = String(req.params.id || '');
+    const {
+      fullName,
+      email,
+      phone,
+      date,
+      time,
+      guests,
+      seatingArea,
+      occasion,
+      dietary,
+      specialRequests,
+      status,
+    } = req.body;
+
+    // Build update data object — only include fields that were sent
+    const updateData: Record<string, unknown> = {};
+    if (fullName !== undefined) updateData.fullName = fullName.trim();
+    if (email !== undefined) updateData.email = email.trim().toLowerCase();
+    if (phone !== undefined) updateData.phone = phone.trim();
+    if (date !== undefined) updateData.date = date;
+    if (time !== undefined) updateData.time = time;
+    if (guests !== undefined) updateData.guests = Number(guests);
+    if (seatingArea !== undefined) updateData.seatingArea = seatingArea;
+    if (occasion !== undefined) updateData.occasion = occasion;
+    if (dietary !== undefined) updateData.dietary = dietary;
+    if (specialRequests !== undefined) updateData.specialRequests = specialRequests;
+    if (status !== undefined) {
+      const validStatuses = ['confirmed', 'cancelled', 'completed'];
+      if (!validStatuses.includes(status)) {
+        res.status(400).json({
+          success: false,
+          message: `Status must be one of: ${validStatuses.join(', ')}`,
+        });
+        return;
+      }
+      updateData.status = status;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({
+        success: false,
+        message: 'No fields provided to update',
+      });
+      return;
+    }
+
+    const updated = await prisma.reservation.update({
+      where: { id },
+      data: updateData,
+    });
+
+    console.log(`✅ Reservation ${updated.bookingCode} edited by admin`);
+
+    res.json({
+      success: true,
+      message: 'Reservation updated successfully',
+      data: updated,
+    });
+  } catch (error) {
+    console.error('Error editing reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to edit reservation',
+    });
+  }
+};
+
+// DELETE /api/admin/reservations/:id
+// Permanently removes a reservation from the database
+export const deleteReservation = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const id = String(req.params.id || '');
+
+    const deleted = await prisma.reservation.delete({
+      where: { id },
+    });
+
+    console.log(`🗑️ Reservation ${deleted.bookingCode} deleted by admin`);
+
+    res.json({
+      success: true,
+      message: `Reservation ${deleted.bookingCode} has been permanently removed`,
+    });
+  } catch (error) {
+    console.error('Error deleting reservation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete reservation',
+    });
+  }
+};
+
 // GET /api/admin/contacts
 // Returns ALL contact messages
 export const getAllContacts = async (req: AuthRequest, res: Response): Promise<void> => {

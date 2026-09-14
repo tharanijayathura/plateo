@@ -3,20 +3,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-// ===========================================
-// ADMIN DASHBOARD
-// ===========================================
-// This page displays:
-//   1. Stats summary (total bookings, today's bookings, new contacts)
-//   2. Reservations table (all bookings with status management)
-//   3. Contact messages table (all inquiries with status management)
-//
-// HOW IT WORKS:
-//   - On page load, we check if a JWT token exists in localStorage
-//   - If no token → redirect to /admin (login page)
-//   - If token exists → fetch data from backend with token in Authorization header
-//   - Display data in tables with filtering and status update buttons
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 interface Reservation {
@@ -67,7 +53,25 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Helper to get auth headers
+  // Edit modal state
+  const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
+  const [editForm, setEditForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    date: '',
+    time: '',
+    guests: 1,
+    seatingArea: '',
+    occasion: '',
+    specialRequests: '',
+    status: '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Delete confirmation state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const getAuthHeaders = () => {
     const token = localStorage.getItem('plateo_admin_token');
     return {
@@ -76,7 +80,6 @@ export default function AdminDashboard() {
     };
   };
 
-  // Fetch all data from the backend
   const fetchData = useCallback(async () => {
     const token = localStorage.getItem('plateo_admin_token');
     if (!token) {
@@ -86,14 +89,12 @@ export default function AdminDashboard() {
 
     try {
       const headers = getAuthHeaders();
-
       const [statsRes, reservationsRes, contactsRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/stats`, { headers }),
         fetch(`${API_URL}/api/admin/reservations`, { headers }),
         fetch(`${API_URL}/api/admin/contacts`, { headers }),
       ]);
 
-      // If any request returns 401, the token is expired
       if (statsRes.status === 401 || reservationsRes.status === 401) {
         localStorage.removeItem('plateo_admin_token');
         router.push('/admin');
@@ -120,7 +121,16 @@ export default function AdminDashboard() {
     fetchData();
   }, [fetchData]);
 
-  // Update reservation status
+  // Refresh stats helper
+  const refreshStats = async () => {
+    try {
+      const statsRes = await fetch(`${API_URL}/api/admin/stats`, { headers: getAuthHeaders() });
+      const statsData = await statsRes.json();
+      if (statsData.success) setStats(statsData.data);
+    } catch { /* ignore */ }
+  };
+
+  // Update reservation status (quick action buttons)
   const updateReservationStatus = async (id: string, newStatus: string) => {
     try {
       const response = await fetch(`${API_URL}/api/admin/reservations/${id}`, {
@@ -128,18 +138,77 @@ export default function AdminDashboard() {
         headers: getAuthHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
-
       if (response.ok) {
         setReservations((prev) =>
           prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
         );
-        // Refresh stats
-        const statsRes = await fetch(`${API_URL}/api/admin/stats`, { headers: getAuthHeaders() });
-        const statsData = await statsRes.json();
-        if (statsData.success) setStats(statsData.data);
+        await refreshStats();
       }
     } catch {
       console.error('Failed to update reservation status');
+    }
+  };
+
+  // DELETE a reservation
+  const deleteReservation = async (id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/reservations/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        setReservations((prev) => prev.filter((r) => r.id !== id));
+        setDeletingId(null);
+        await refreshStats();
+      }
+    } catch {
+      console.error('Failed to delete reservation');
+    }
+  };
+
+  // Open the EDIT modal — pre-fill with current data
+  const openEditModal = (r: Reservation) => {
+    setEditingReservation(r);
+    setEditForm({
+      fullName: r.fullName,
+      email: r.email,
+      phone: r.phone,
+      date: r.date,
+      time: r.time,
+      guests: r.guests,
+      seatingArea: r.seatingArea,
+      occasion: r.occasion,
+      specialRequests: r.specialRequests,
+      status: r.status,
+    });
+  };
+
+  // SAVE the edit
+  const saveEdit = async () => {
+    if (!editingReservation) return;
+    setIsSaving(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/admin/reservations/${editingReservation.id}`,
+        {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(editForm),
+        }
+      );
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setReservations((prev) =>
+          prev.map((r) => (r.id === editingReservation.id ? { ...r, ...data.data } : r))
+        );
+        setEditingReservation(null);
+        await refreshStats();
+      }
+    } catch {
+      console.error('Failed to save reservation edit');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -151,27 +220,22 @@ export default function AdminDashboard() {
         headers: getAuthHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
-
       if (response.ok) {
         setContacts((prev) =>
           prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
         );
-        const statsRes = await fetch(`${API_URL}/api/admin/stats`, { headers: getAuthHeaders() });
-        const statsData = await statsRes.json();
-        if (statsData.success) setStats(statsData.data);
+        await refreshStats();
       }
     } catch {
       console.error('Failed to update contact status');
     }
   };
 
-  // Logout
   const handleLogout = () => {
     localStorage.removeItem('plateo_admin_token');
     router.push('/admin');
   };
 
-  // Filter reservations by status
   const filteredReservations =
     statusFilter === 'all'
       ? reservations
@@ -250,7 +314,6 @@ export default function AdminDashboard() {
         {/* Reservations Tab */}
         {activeTab === 'reservations' && (
           <>
-            {/* Filter row */}
             <div style={s.filterRow}>
               {['all', 'confirmed', 'cancelled', 'completed'].map((f) => (
                 <button
@@ -266,7 +329,6 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Reservations Table */}
             <div style={s.tableWrapper}>
               <table style={s.table}>
                 <thead>
@@ -324,11 +386,13 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td style={s.td}>
-                          <div style={{ display: 'flex', gap: '6px' }}>
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                            {/* Status quick actions */}
                             {r.status !== 'confirmed' && (
                               <button
                                 style={s.actionBtn}
                                 onClick={() => updateReservationStatus(r.id, 'confirmed')}
+                                title="Confirm"
                               >
                                 ✓
                               </button>
@@ -337,6 +401,7 @@ export default function AdminDashboard() {
                               <button
                                 style={{ ...s.actionBtn, color: '#e74c3c' }}
                                 onClick={() => updateReservationStatus(r.id, 'cancelled')}
+                                title="Cancel"
                               >
                                 ✕
                               </button>
@@ -345,10 +410,27 @@ export default function AdminDashboard() {
                               <button
                                 style={{ ...s.actionBtn, color: '#b88e4a' }}
                                 onClick={() => updateReservationStatus(r.id, 'completed')}
+                                title="Complete"
                               >
                                 ✔
                               </button>
                             )}
+                            {/* EDIT button */}
+                            <button
+                              style={{ ...s.actionBtn, color: '#3498db' }}
+                              onClick={() => openEditModal(r)}
+                              title="Edit Reservation"
+                            >
+                              ✎
+                            </button>
+                            {/* DELETE button */}
+                            <button
+                              style={{ ...s.actionBtn, color: '#e74c3c', borderColor: 'rgba(231,76,60,0.3)' }}
+                              onClick={() => setDeletingId(r.id)}
+                              title="Delete Reservation"
+                            >
+                              🗑
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -450,11 +532,211 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+
+      {/* ============================================ */}
+      {/* DELETE CONFIRMATION MODAL                    */}
+      {/* ============================================ */}
+      {deletingId && (
+        <div style={s.modalOverlay} onClick={() => setDeletingId(null)}>
+          <div style={s.deleteModal} onClick={(e) => e.stopPropagation()}>
+            <div style={s.deleteIcon}>⚠</div>
+            <h3 style={s.deleteTitle}>Delete Reservation</h3>
+            <p style={s.deleteText}>
+              This will <strong>permanently remove</strong> booking{' '}
+              <span style={{ color: '#b88e4a' }}>
+                {reservations.find((r) => r.id === deletingId)?.bookingCode}
+              </span>{' '}
+              from the database. This action cannot be undone.
+            </p>
+            <div style={s.deleteActions}>
+              <button
+                style={s.deleteCancelBtn}
+                onClick={() => setDeletingId(null)}
+              >
+                KEEP RESERVATION
+              </button>
+              <button
+                style={s.deleteConfirmBtn}
+                onClick={() => deleteReservation(deletingId)}
+              >
+                DELETE PERMANENTLY
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================ */}
+      {/* EDIT RESERVATION MODAL                       */}
+      {/* ============================================ */}
+      {editingReservation && (
+        <div style={s.modalOverlay} onClick={() => setEditingReservation(null)}>
+          <div style={s.editModal} onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div style={s.editHeader}>
+              <div>
+                <h3 style={s.editTitle}>Edit Reservation</h3>
+                <p style={s.editSubtitle}>
+                  Booking Code: <span style={{ color: '#b88e4a' }}>{editingReservation.bookingCode}</span>
+                </p>
+              </div>
+              <button
+                style={s.editCloseBtn}
+                onClick={() => setEditingReservation(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div style={{ height: '1px', background: 'rgba(184,142,74,0.15)', margin: '0 0 24px 0' }} />
+
+            {/* Edit Form */}
+            <div style={s.editGrid}>
+              {/* Full Name */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>FULL NAME</label>
+                <input
+                  style={s.editInput}
+                  value={editForm.fullName}
+                  onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+                />
+              </div>
+
+              {/* Email */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>EMAIL</label>
+                <input
+                  style={s.editInput}
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                />
+              </div>
+
+              {/* Phone */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>PHONE</label>
+                <input
+                  style={s.editInput}
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                />
+              </div>
+
+              {/* Date */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>DATE</label>
+                <input
+                  style={s.editInput}
+                  type="date"
+                  value={editForm.date}
+                  onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                />
+              </div>
+
+              {/* Time */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>TIME</label>
+                <input
+                  style={s.editInput}
+                  value={editForm.time}
+                  onChange={(e) => setEditForm({ ...editForm, time: e.target.value })}
+                />
+              </div>
+
+              {/* Guests */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>GUESTS</label>
+                <input
+                  style={s.editInput}
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={editForm.guests}
+                  onChange={(e) => setEditForm({ ...editForm, guests: Number(e.target.value) })}
+                />
+              </div>
+
+              {/* Seating Area */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>SEATING AREA</label>
+                <select
+                  style={s.editInput}
+                  value={editForm.seatingArea}
+                  onChange={(e) => setEditForm({ ...editForm, seatingArea: e.target.value })}
+                >
+                  <option value="main">Main Dining Hall</option>
+                  <option value="counter">Chef&apos;s Counter</option>
+                  <option value="verandah">Garden Verandah</option>
+                  <option value="private">Private Folio</option>
+                </select>
+              </div>
+
+              {/* Status */}
+              <div style={s.editField}>
+                <label style={s.editLabel}>STATUS</label>
+                <select
+                  style={s.editInput}
+                  value={editForm.status}
+                  onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                >
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              {/* Occasion */}
+              <div style={{ ...s.editField, gridColumn: '1 / -1' }}>
+                <label style={s.editLabel}>OCCASION</label>
+                <input
+                  style={s.editInput}
+                  value={editForm.occasion}
+                  onChange={(e) => setEditForm({ ...editForm, occasion: e.target.value })}
+                />
+              </div>
+
+              {/* Special Requests */}
+              <div style={{ ...s.editField, gridColumn: '1 / -1' }}>
+                <label style={s.editLabel}>SPECIAL REQUESTS</label>
+                <textarea
+                  style={{ ...s.editInput, minHeight: '80px', resize: 'vertical' as const }}
+                  value={editForm.specialRequests}
+                  onChange={(e) => setEditForm({ ...editForm, specialRequests: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div style={s.editActions}>
+              <button
+                style={s.editCancelBtn}
+                onClick={() => setEditingReservation(null)}
+              >
+                DISCARD CHANGES
+              </button>
+              <button
+                style={{
+                  ...s.editSaveBtn,
+                  opacity: isSaving ? 0.7 : 1,
+                }}
+                onClick={saveEdit}
+                disabled={isSaving}
+              >
+                {isSaving ? 'SAVING...' : 'SAVE CHANGES'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// Inline styles (Plateo dark luxury aesthetic)
+// ================================================
+// STYLES — Plateo dark luxury aesthetic
+// ================================================
 const s: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
@@ -667,5 +949,166 @@ const s: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     borderRadius: '2px',
     letterSpacing: '0.5px',
+  },
+
+  // ---- Modal shared ----
+  modalOverlay: {
+    position: 'fixed' as const,
+    inset: 0,
+    background: 'rgba(0,0,0,0.75)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px',
+  },
+
+  // ---- Delete Modal ----
+  deleteModal: {
+    background: '#121212',
+    border: '1px solid rgba(231,76,60,0.3)',
+    borderRadius: '2px',
+    padding: '36px',
+    maxWidth: '440px',
+    width: '100%',
+    textAlign: 'center' as const,
+  },
+  deleteIcon: {
+    fontSize: '36px',
+    marginBottom: '16px',
+    color: '#e74c3c',
+  },
+  deleteTitle: {
+    fontSize: '16px',
+    fontWeight: 400,
+    letterSpacing: '3px',
+    color: '#e8e0d4',
+    margin: '0 0 12px 0',
+  },
+  deleteText: {
+    fontSize: '13px',
+    color: 'rgba(255,255,255,0.5)',
+    lineHeight: '1.6',
+    margin: '0 0 28px 0',
+  },
+  deleteActions: {
+    display: 'flex',
+    gap: '12px',
+    justifyContent: 'center',
+  },
+  deleteCancelBtn: {
+    padding: '12px 24px',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: '9px',
+    letterSpacing: '2px',
+    cursor: 'pointer',
+    borderRadius: '2px',
+  },
+  deleteConfirmBtn: {
+    padding: '12px 24px',
+    background: 'rgba(231,76,60,0.9)',
+    border: 'none',
+    color: '#fff',
+    fontSize: '9px',
+    letterSpacing: '2px',
+    cursor: 'pointer',
+    borderRadius: '2px',
+    fontWeight: 600,
+  },
+
+  // ---- Edit Modal ----
+  editModal: {
+    background: '#121212',
+    border: '1px solid rgba(184,142,74,0.25)',
+    borderRadius: '2px',
+    padding: '32px',
+    maxWidth: '680px',
+    width: '100%',
+    maxHeight: '90vh',
+    overflowY: 'auto' as const,
+  },
+  editHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: '20px',
+  },
+  editTitle: {
+    fontSize: '16px',
+    fontWeight: 400,
+    letterSpacing: '3px',
+    color: '#e8e0d4',
+    margin: '0 0 6px 0',
+  },
+  editSubtitle: {
+    fontSize: '11px',
+    color: 'rgba(255,255,255,0.4)',
+    margin: 0,
+  },
+  editCloseBtn: {
+    background: 'transparent',
+    border: 'none',
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: '18px',
+    cursor: 'pointer',
+    padding: '4px 8px',
+  },
+  editGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '20px',
+  },
+  editField: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '6px',
+  },
+  editLabel: {
+    fontSize: '9px',
+    letterSpacing: '2px',
+    color: 'rgba(184,142,74,0.6)',
+    fontWeight: 500,
+  },
+  editInput: {
+    width: '100%',
+    padding: '12px 14px',
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '2px',
+    color: '#e8e0d4',
+    fontSize: '13px',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  },
+  editActions: {
+    display: 'flex',
+    gap: '12px',
+    justifyContent: 'flex-end',
+    marginTop: '28px',
+    paddingTop: '20px',
+    borderTop: '1px solid rgba(255,255,255,0.06)',
+  },
+  editCancelBtn: {
+    padding: '12px 24px',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: '9px',
+    letterSpacing: '2px',
+    cursor: 'pointer',
+    borderRadius: '2px',
+  },
+  editSaveBtn: {
+    padding: '12px 28px',
+    background: 'linear-gradient(135deg, rgba(184,142,74,0.9) 0%, rgba(156,120,62,0.9) 100%)',
+    border: 'none',
+    color: '#0a0a0a',
+    fontSize: '10px',
+    fontWeight: 600,
+    letterSpacing: '2px',
+    cursor: 'pointer',
+    borderRadius: '2px',
   },
 };

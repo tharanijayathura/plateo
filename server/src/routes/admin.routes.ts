@@ -13,6 +13,8 @@ import {
   adminLogin,
   getAllReservations,
   updateReservationStatus,
+  editReservation,
+  deleteReservation,
   getAllContacts,
   updateContactStatus,
   getDashboardStats,
@@ -28,6 +30,8 @@ router.post('/login', adminLogin);
 router.get('/stats', authMiddleware, getDashboardStats);
 router.get('/reservations', authMiddleware, getAllReservations);
 router.patch('/reservations/:id', authMiddleware, updateReservationStatus);
+router.put('/reservations/:id', authMiddleware, editReservation);
+router.delete('/reservations/:id', authMiddleware, deleteReservation);
 router.get('/contacts', authMiddleware, getAllContacts);
 router.patch('/contacts/:id', authMiddleware, updateContactStatus);
 
