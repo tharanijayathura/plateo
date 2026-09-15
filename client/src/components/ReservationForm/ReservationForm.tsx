@@ -683,7 +683,7 @@ export default function ReservationForm() {
                       
                       <div className={styles.menuItemFooter}>
                         <div className={styles.menuItemRating}>
-                          {item.rating && `★ ${item.rating} (${item.reviewCount || 0})`}
+                          {item.rating && !item.badge?.includes('★') ? `★ ${item.rating}` : ''}
                         </div>
                         
                         <div className={styles.menuItemActions}>
