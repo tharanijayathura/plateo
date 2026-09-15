@@ -1028,6 +1028,292 @@
 }
 
 /* ==========================================================================
+   STEP 3: BROWSE & PRE-ORDER MENU
+   ========================================================================== */
+
+.menuStepWrapper {
+  position: relative;
+  padding-bottom: 90px;
+}
+
+.menuCategoryFilters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.menuCategoryBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 24px;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.6);
+}
+
+.menuCategoryBtnActive {
+  border: 1px solid #E8C47A;
+  background: rgba(232, 196, 122, 0.15);
+  color: #E8C47A;
+}
+
+.menuLoadingState {
+  text-align: center;
+  padding: 3rem 0;
+  color: #E8C47A;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.9rem;
+}
+
+.menuItemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.menuItemCard {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.menuItemCardSelected {
+  background: rgba(232, 196, 122, 0.05);
+  border-color: rgba(232, 196, 122, 0.4);
+}
+
+.menuItemImageWrap {
+  width: 120px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.menuItemImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.menuItemContent {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.menuItemTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.menuItemName {
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  color: #F7F3E9;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.menuItemPrice {
+  color: #E8C47A;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.menuItemBadge {
+  font-size: 0.6rem;
+  background: rgba(232, 196, 122, 0.15);
+  color: #E8C47A;
+  border: 1px solid rgba(232, 196, 122, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+}
+
+.menuItemDesc {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.8rem;
+  color: rgba(247, 243, 233, 0.7);
+  margin: 0.6rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.menuItemTastingNote {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  color: rgba(232, 196, 122, 0.8);
+  font-style: italic;
+  margin: 0 0 0.75rem 0;
+}
+
+.menuItemFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  gap: 0.5rem;
+}
+
+.menuItemRating {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+
+.menuItemActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.menuQtyBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 196, 122, 0.4);
+  background: rgba(232, 196, 122, 0.08);
+  color: #E8C47A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.menuQtyBtn:hover {
+  background: rgba(232, 196, 122, 0.25);
+  border-color: #E8C47A;
+  color: #FFFFFF;
+}
+
+.menuAddBtn {
+  height: 32px;
+  padding: 0 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid #E8C47A;
+  background: rgba(232, 196, 122, 0.12);
+  color: #E8C47A;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.menuAddBtn:hover {
+  background: rgba(232, 196, 122, 0.3);
+  color: #FFFFFF;
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.25);
+}
+
+.menuQtyDisplay {
+  color: #F7F3E9;
+  font-weight: 600;
+  width: 18px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* Floating Summary Bar */
+.menuSummaryBar {
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  right: -1px;
+  background: rgba(14, 11, 8, 0.97);
+  border-top: 1px solid rgba(232, 196, 122, 0.3);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  gap: 1rem;
+}
+
+.menuSummaryInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuSummaryCount {
+  color: #F7F3E9;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.menuSummarySubtext {
+  color: rgba(247, 243, 233, 0.6);
+  font-size: 0.78rem;
+}
+
+.menuSummaryActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.menuContinueBtn {
+  background: linear-gradient(135deg, #E8C47A 0%, #D4AF37 50%, #B89230 100%);
+  color: #080705;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+  font-family: var(--font-cinzel, 'Cinzel', serif);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+}
+
+.menuContinueBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.5);
+}
+
+/* ==========================================================================
    RESPONSIVE BREAKPOINTS
    ========================================================================== */
 
@@ -1046,6 +1332,70 @@
   .wizardContainer {
     padding: 1.5rem 1.15rem;
     border-radius: 12px;
+  }
+
+  .menuItemsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .menuItemCard {
+    flex-direction: column;
+  }
+
+  .menuItemImageWrap {
+    width: 100%;
+    height: 160px;
+  }
+
+  .menuItemContent {
+    padding: 0.85rem;
+  }
+
+  .menuItemName {
+    font-size: 0.95rem;
+  }
+
+  .menuCategoryFilters {
+    gap: 0.5rem;
+  }
+
+  .menuCategoryBtn {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.68rem;
+  }
+
+  .menuSummaryBar {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .menuSummaryActions {
+    flex-direction: row;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .menuSummaryActions .prevBtn {
+    flex: 1;
+    width: auto;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.68rem;
+  }
+
+  .menuContinueBtn {
+    flex: 2;
+    width: auto;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.68rem;
+  }
+
+  .menuStepWrapper {
+    padding-bottom: 160px;
   }
 
   .progressHeader {
@@ -1283,6 +1633,23 @@
 @media (max-width: 480px) {
   .wizardContainer {
     padding: 1.25rem 0.85rem;
+  }
+
+  .menuItemImageWrap {
+    height: 140px;
+  }
+
+  .menuItemBadge {
+    font-size: 0.55rem;
+  }
+
+  .menuItemDesc {
+    font-size: 0.76rem;
+    -webkit-line-clamp: 3;
+  }
+
+  .menuStepWrapper {
+    padding-bottom: 180px;
   }
 
   .stepHeading {

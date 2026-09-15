@@ -392,10 +392,10 @@ export default function ReservationForm() {
           </div>
 
           {/* Party Size Selector */}
-          <div className={styles.guestSelectorBlock}>
+          <div className={styles.partySizeBox}>
             <label className={styles.fieldLabel}>NUMBER OF GUESTS</label>
 
-            <div className={styles.guestCounterControl}>
+            <div className={styles.guestCounterRow}>
               <button
                 type="button"
                 className={styles.counterBtn}
@@ -405,9 +405,9 @@ export default function ReservationForm() {
                 &minus;
               </button>
 
-              <div className={styles.counterDisplay}>
-                <span className={styles.counterNumber}>{guests}</span>
-                <span className={styles.counterLabel}>GUESTS</span>
+              <div className={styles.guestDisplay}>
+                <span className={styles.guestNumber}>{guests}</span>
+                <span className={styles.guestText}>GUESTS</span>
               </div>
 
               <button
@@ -420,12 +420,12 @@ export default function ReservationForm() {
               </button>
             </div>
 
-            <div className={styles.quickGuestsGrid}>
+            <div className={styles.guestPillRow}>
               {[1, 2, 3, 4, 5, 6, 8, 10].map((num) => (
                 <button
                   key={num}
                   type="button"
-                  className={`${styles.quickGuestBtn} ${guests === num ? styles.quickGuestActive : ''}`}
+                  className={`${styles.guestPill} ${guests === num ? styles.activePill : ''}`}
                   onClick={() => setGuests(num)}
                 >
                   {num} {num === 1 ? 'Guest' : 'Guests'}
@@ -518,11 +518,11 @@ export default function ReservationForm() {
           </div>
 
           {/* Date Selector */}
-          <div className={styles.dateSelectorBlock}>
+          <div className={styles.datePickerBox}>
             <label className={styles.fieldLabel} htmlFor={`${formId}-date`}>
               RESERVATION DATE
             </label>
-            <div className={styles.dateInputRow}>
+            <div className={styles.quickDateRow}>
               <input
                 type="date"
                 id={`${formId}-date`}
@@ -530,51 +530,49 @@ export default function ReservationForm() {
                 onChange={(e) => setDate(e.target.value)}
                 className={styles.dateInput}
               />
-              <div className={styles.quickDatePills}>
-                <button
-                  type="button"
-                  className={styles.quickDateBtn}
-                  onClick={() => setQuickDate(1)}
-                >
-                  Tomorrow
-                </button>
-                <button
-                  type="button"
-                  className={styles.quickDateBtn}
-                  onClick={() => setQuickDate(2)}
-                >
-                  In 2 Days
-                </button>
-                <button
-                  type="button"
-                  className={styles.quickDateBtn}
-                  onClick={() => setQuickDate(7)}
-                >
-                  Next Week
-                </button>
-              </div>
+              <button
+                type="button"
+                className={styles.quickDateBtn}
+                onClick={() => setQuickDate(1)}
+              >
+                Tomorrow
+              </button>
+              <button
+                type="button"
+                className={styles.quickDateBtn}
+                onClick={() => setQuickDate(2)}
+              >
+                In 2 Days
+              </button>
+              <button
+                type="button"
+                className={styles.quickDateBtn}
+                onClick={() => setQuickDate(7)}
+              >
+                Next Week
+              </button>
             </div>
             {errors.date && <p className={styles.fieldError}>{errors.date}</p>}
           </div>
 
           {/* Time Slot Categories */}
-          <div className={styles.timeSlotsBlock}>
+          <div className={styles.timeSlotsWrapper}>
             <label className={styles.fieldLabel}>PREFERRED SERVICE SLOT</label>
             {SERVICE_SLOTS.map((group) => (
-              <div key={group.category} className={styles.slotGroup}>
-                <span className={styles.slotGroupTitle}>{group.category}</span>
-                <div className={styles.slotsGrid}>
+              <div key={group.category} className={styles.serviceCategoryBlock}>
+                <span className={styles.categoryTitle}>{group.category}</span>
+                <div className={styles.timePillsGrid}>
                   {group.slots.map((slot) => {
                     const isSelected = time === slot.time;
                     return (
                       <button
                         key={slot.time}
                         type="button"
-                        className={`${styles.slotBtn} ${isSelected ? styles.slotBtnActive : ''}`}
+                        className={`${styles.timePill} ${isSelected ? styles.activeTimePill : ''}`}
                         onClick={() => setTime(slot.time)}
                       >
                         <span className={styles.slotTime}>{slot.time}</span>
-                        <span className={styles.slotStatus}>{slot.status}</span>
+                        <span className={`${styles.slotStatus} ${slot.status === 'Filling Fast' ? styles.statusFast : slot.status === 'Most Popular' ? styles.statusPrime : ''}`}>{slot.status}</span>
                       </button>
                     );
                   })}
@@ -612,7 +610,7 @@ export default function ReservationForm() {
 
       {/* STEP 3: BROWSE & PRE-ORDER MENU */}
       {step === 3 && (
-        <div className={styles.stepSection} style={{ position: 'relative', paddingBottom: '80px' }}>
+        <div className={`${styles.stepSection} ${styles.menuStepWrapper}`}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionPill}>STEP 03 OF 04</span>
             <h3 className={styles.stepHeading}>BROWSE &amp; PRE-ORDER</h3>
@@ -622,25 +620,13 @@ export default function ReservationForm() {
           </div>
 
           {/* Category Filter Pills */}
-          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          <div className={styles.menuCategoryFilters}>
             {['ALL', 'BREAKFAST', 'LUNCH', 'DINNER', 'DESSERTS', 'DRINKS'].map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setMealCategoryFilter(cat)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '24px',
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  border: mealCategoryFilter === cat ? '1px solid #E8C47A' : '1px solid rgba(255,255,255,0.1)',
-                  background: mealCategoryFilter === cat ? 'rgba(232, 196, 122, 0.15)' : 'rgba(255,255,255,0.03)',
-                  color: mealCategoryFilter === cat ? '#E8C47A' : 'rgba(255,255,255,0.6)',
-                }}
+                className={mealCategoryFilter === cat ? `${styles.menuCategoryBtn} ${styles.menuCategoryBtnActive}` : styles.menuCategoryBtn}
               >
                 {cat}
               </button>
@@ -648,135 +634,77 @@ export default function ReservationForm() {
           </div>
 
           {isMenuLoading ? (
-            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#E8C47A' }}>
+            <div className={styles.menuLoadingState}>
               Loading menu selections...
             </div>
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '1.5rem',
-              marginBottom: '2rem'
-            }}>
+            <div className={styles.menuItemsGrid}>
               {filteredMenuItems.map((item) => {
                 const qty = orderedItems[item.id] || 0;
                 return (
                   <div
                     key={item.id}
-                    style={{
-                      display: 'flex',
-                      background: qty > 0 ? 'rgba(232, 196, 122, 0.05)' : 'rgba(255, 255, 255, 0.03)',
-                      border: qty > 0 ? '1px solid rgba(232, 196, 122, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      transition: 'all 0.3s',
-                    }}
+                    className={`${styles.menuItemCard} ${qty > 0 ? styles.menuItemCardSelected : ''}`}
                   >
                     {item.image && (
-                      <div style={{ width: '120px', flexShrink: 0, position: 'relative' }}>
+                      <div className={styles.menuItemImageWrap}>
                         <img 
                           src={item.image} 
                           alt={item.name} 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                          className={styles.menuItemImage}
                         />
                       </div>
                     )}
-                    <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
-                        <h4 style={{ fontFamily: 'Cinzel, serif', color: '#F7F3E9', margin: 0, fontSize: '1.1rem', lineHeight: '1.2' }}>
+                    <div className={styles.menuItemContent}>
+                      <div className={styles.menuItemTopRow}>
+                        <h4 className={styles.menuItemName}>
                           {item.name}
                         </h4>
-                        <span style={{ color: '#E8C47A', fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
+                        <span className={styles.menuItemPrice}>
                           {item.price}
                         </span>
                       </div>
                       
                       {item.badge && (
-                        <span style={{ 
-                          fontSize: '0.65rem', 
-                          background: 'rgba(232, 196, 122, 0.15)', 
-                          color: '#E8C47A', 
-                          border: '1px solid rgba(232, 196, 122, 0.3)',
-                          padding: '0.2rem 0.5rem', 
-                          borderRadius: '4px', 
-                          alignSelf: 'flex-start', 
-                          marginTop: '0.4rem', 
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em'
-                        }}>
+                        <span className={styles.menuItemBadge}>
                           {item.badge}
                         </span>
                       )}
                       
-                      <p style={{ 
-                        fontSize: '0.8rem', 
-                        color: 'rgba(247, 243, 233, 0.7)', 
-                        margin: '0.6rem 0', 
-                        display: '-webkit-box', 
-                        WebkitLineClamp: 2, 
-                        WebkitBoxOrient: 'vertical', 
-                        overflow: 'hidden',
-                        lineHeight: '1.4'
-                      }}>
+                      <p className={styles.menuItemDesc}>
                         {item.description}
                       </p>
                       
                       {item.tastingNote && (
-                        <p style={{ 
-                          fontSize: '0.75rem', 
-                          color: 'rgba(232, 196, 122, 0.8)', 
-                          fontStyle: 'italic', 
-                          margin: '0 0 0.75rem 0' 
-                        }}>
+                        <p className={styles.menuItemTastingNote}>
                           ~ {item.tastingNote}
                         </p>
                       )}
                       
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+                      <div className={styles.menuItemFooter}>
+                        <div className={styles.menuItemRating}>
                           {item.rating && `★ ${item.rating} (${item.reviewCount || 0})`}
                         </div>
                         
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div className={styles.menuItemActions}>
                           {qty > 0 && (
                             <button 
                               type="button" 
                               onClick={() => handleItemQuantityChange(item.id, -1)} 
-                              style={{ 
-                                width: '28px', height: '28px', 
-                                borderRadius: '50%', 
-                                border: '1px solid rgba(232, 196, 122, 0.4)', 
-                                background: 'transparent', 
-                                color: '#E8C47A', 
-                                cursor: 'pointer', 
-                                display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                              }}
+                              className={styles.menuQtyBtn}
                             >
                               &minus;
                             </button>
                           )}
                           {qty > 0 && (
-                            <span style={{ color: '#F7F3E9', fontWeight: 600, width: '16px', textAlign: 'center' }}>
+                            <span className={styles.menuQtyDisplay}>
                               {qty}
                             </span>
                           )}
                           <button 
                             type="button" 
                             onClick={() => handleItemQuantityChange(item.id, 1)} 
-                            style={{ 
-                              width: qty === 0 ? 'auto' : '28px', 
-                              height: '28px', 
-                              padding: qty === 0 ? '0 1rem' : '0', 
-                              borderRadius: qty === 0 ? '20px' : '50%', 
-                              border: '1px solid #E8C47A', 
-                              background: 'rgba(232, 196, 122, 0.1)', 
-                              color: '#E8C47A', 
-                              cursor: 'pointer', 
-                              display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                              fontSize: qty === 0 ? '0.75rem' : '1rem', 
-                              fontWeight: 600 
-                            }}
+                            className={qty === 0 ? styles.menuAddBtn : styles.menuQtyBtn}
                           >
                             {qty === 0 ? 'ADD TO ORDER' : '+'}
                           </button>
@@ -790,58 +718,28 @@ export default function ReservationForm() {
           )}
 
           {/* Floating Summary Bar */}
-          <div style={{ 
-            position: 'absolute', 
-            bottom: 0, 
-            left: 0, 
-            right: 0, 
-            background: 'rgba(14, 11, 8, 0.95)', 
-            borderTop: '1px solid rgba(232, 196, 122, 0.3)', 
-            padding: '1rem 1.5rem', 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            backdropFilter: 'blur(10px)', 
-            zIndex: 10,
-            boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
-            borderBottomLeftRadius: '16px',
-            borderBottomRightRadius: '16px'
-          }}>
-            <div>
-              <div style={{ color: '#F7F3E9', fontWeight: 600, fontSize: '1.1rem' }}>
+          <div className={styles.menuSummaryBar}>
+            <div className={styles.menuSummaryInfo}>
+              <div className={styles.menuSummaryCount}>
                 {totalPreorderedCount} Item{totalPreorderedCount !== 1 ? 's' : ''} Selected
               </div>
-              <div style={{ color: 'rgba(247, 243, 233, 0.6)', fontSize: '0.8rem' }}>
+              <div className={styles.menuSummarySubtext}>
                 Pre-ordering is optional
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className={styles.menuSummaryActions}>
               <button
                 type="button"
                 className={styles.prevBtn}
                 onClick={handlePrevStep}
-                style={{ padding: '0.8rem 1.5rem', margin: 0 }}
               >
                 &larr; BACK
               </button>
               <button 
                 type="button" 
                 onClick={handleNextStep} 
-                style={{ 
-                  background: '#E8C47A', 
-                  color: '#0e0b08', 
-                  border: 'none', 
-                  padding: '0.8rem 1.5rem', 
-                  borderRadius: '8px', 
-                  fontWeight: 700, 
-                  cursor: 'pointer', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '0.5rem', 
-                  letterSpacing: '0.05em',
-                  fontFamily: 'Inter, sans-serif'
-                }}
+                className={styles.menuContinueBtn}
               >
                 {totalPreorderedCount === 0 ? 'SKIP — ORDER AT TABLE' : 'CONTINUE WITH SELECTION'}
                 <span>&rarr;</span>

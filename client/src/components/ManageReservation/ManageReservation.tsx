@@ -176,8 +176,8 @@ export default function ManageReservation() {
       {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
 
       {/* Search & Refresh Filter Row */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: '220px' }}>
+      <div className={styles.searchFilterRow}>
+        <div className={styles.searchFilterCol}>
           <input
             type="text"
             className={styles.inputField}
@@ -188,8 +188,7 @@ export default function ManageReservation() {
         </div>
         <button
           onClick={fetchReservations}
-          className={styles.editBtn}
-          style={{ width: 'auto', padding: '0.85rem 1.25rem' }}
+          className={`${styles.editBtn} ${styles.refreshBtn}`}
         >
           ↻ REFRESH
         </button>
@@ -197,25 +196,16 @@ export default function ManageReservation() {
 
       {/* Loading state */}
       {isLoading && (
-        <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(232, 196, 122, 0.7)' }}>
+        <div className={styles.loadingState}>
           Loading active reservations...
         </div>
       )}
 
       {/* Empty State */}
       {!isLoading && filteredReservations.length === 0 && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3rem 1.5rem',
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px dashed rgba(232, 196, 122, 0.2)',
-            borderRadius: '10px',
-            color: 'rgba(247, 243, 233, 0.5)',
-          }}
-        >
-          <p style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>No reservations found.</p>
-          <p style={{ fontSize: '0.8rem', color: 'rgba(247, 243, 233, 0.35)' }}>
+        <div className={styles.emptyState}>
+          <p className={styles.emptyStateTitle}>No reservations found.</p>
+          <p className={styles.emptyStateSub}>
             {searchQuery ? 'Try clearing your search query.' : 'There are currently no table bookings in the system.'}
           </p>
         </div>
@@ -223,7 +213,7 @@ export default function ManageReservation() {
 
       {/* RESERVATIONS LIST CARDS */}
       {!isLoading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div className={styles.cardsContainer}>
           {filteredReservations.map((r) => {
             const isCardEditing = editingId === r.id;
             const isCardDeleting = deletingId === r.id;
@@ -234,7 +224,7 @@ export default function ManageReservation() {
                 <div className={styles.detailsHeader}>
                   <div>
                     <span className={styles.bookingCodeBadge}>{r.bookingCode}</span>
-                    <span style={{ fontSize: '0.8rem', color: 'rgba(247,243,233,0.4)', marginLeft: '0.75rem' }}>
+                    <span className={styles.bookingGuestInfo}>
                       {r.fullName} ({r.email})
                     </span>
                   </div>
@@ -282,7 +272,7 @@ export default function ManageReservation() {
 
                       <div className={styles.detailItem}>
                         <span className={styles.detailLabel}>SEATING ZONE</span>
-                        <span className={styles.detailValue} style={{ textTransform: 'capitalize' }}>
+                        <span className={`${styles.detailValue} ${styles.capitalize}`}>
                           {r.seatingArea}
                         </span>
                       </div>
@@ -307,7 +297,7 @@ export default function ManageReservation() {
                       {Array.isArray(r.orderedItems) && (r.orderedItems as { id: string; name: string; price: string; quantity: number }[]).length > 0 && (
                         <div className={`${styles.detailItem} ${styles.fullWidth}`}>
                           <span className={styles.detailLabel}>PRE-ORDERED MEALS &amp; DRINKS</span>
-                          <div style={{ fontSize: '0.85rem', color: '#E8C47A', marginTop: '4px', display: 'flex', flexWrap: 'wrap', gap: '8px 16px' }}>
+                          <div className={styles.orderedItemsList}>
                             {(r.orderedItems as { id: string; name: string; price: string; quantity: number }[]).map((item, idx) => (
                               <span key={idx}>
                                 ✦ {item.quantity}x <strong>{item.name}</strong> ({item.price})
@@ -429,8 +419,7 @@ export default function ManageReservation() {
                         <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
                           <label className={styles.inputLabel}>SPECIAL REQUESTS</label>
                           <textarea
-                            className={styles.inputField}
-                            style={{ minHeight: '70px', resize: 'vertical' }}
+                            className={`${styles.inputField} ${styles.textareaField}`}
                             value={editForm.specialRequests}
                             onChange={(e) => setEditForm({ ...editForm, specialRequests: e.target.value })}
                           />
@@ -447,8 +436,7 @@ export default function ManageReservation() {
                         </button>
                         <button
                           type="button"
-                          className={styles.submitBtn}
-                          style={{ flex: 1, marginTop: 0 }}
+                          className={`${styles.submitBtn} ${styles.saveBtn}`}
                           disabled={isSaving}
                           onClick={() => handleSaveEdit(r.id)}
                         >
@@ -461,11 +449,11 @@ export default function ManageReservation() {
 
                 {/* Inline Delete Confirmation */}
                 {isCardDeleting && (
-                  <div className={styles.editSection} style={{ borderColor: 'rgba(231, 76, 60, 0.4)' }}>
-                    <h3 className={styles.editSectionTitle} style={{ color: '#e74c3c' }}>
+                  <div className={`${styles.editSection} ${styles.deleteSection}`}>
+                    <h3 className={`${styles.editSectionTitle} ${styles.deleteSectionTitle}`}>
                       CONFIRM CANCELLATION
                     </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'rgba(247, 243, 233, 0.7)', margin: '0 0 1.25rem 0' }}>
+                    <p className={styles.deleteSectionText}>
                       Are you sure you want to cancel reservation <strong>{r.bookingCode}</strong> for{' '}
                       <strong>{r.fullName}</strong>? This table will be released and permanently removed.
                     </p>

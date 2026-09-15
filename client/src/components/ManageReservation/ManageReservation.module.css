@@ -171,7 +171,7 @@
 
 .detailsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem 1.5rem;
   margin-bottom: 1.25rem;
 }
@@ -294,4 +294,166 @@
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 1rem;
+}
+
+/* Replacing inline styles */
+.searchFilterRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.searchFilterCol {
+  flex: 1;
+  min-width: 220px;
+}
+
+.refreshBtn {
+  width: auto;
+  padding: 0.85rem 1.25rem;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(232, 196, 122, 0.7);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(232, 196, 122, 0.2);
+  border-radius: 10px;
+  color: rgba(247, 243, 233, 0.5);
+}
+
+.emptyStateTitle {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.emptyStateSub {
+  font-size: 0.8rem;
+  color: rgba(247, 243, 233, 0.35);
+}
+
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bookingGuestInfo {
+  font-size: 0.8rem;
+  color: rgba(247, 243, 233, 0.4);
+  margin-left: 0.75rem;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.orderedItemsList {
+  font-size: 0.85rem;
+  color: #E8C47A;
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.textareaField {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.saveBtn {
+  flex: 1;
+  margin-top: 0;
+}
+
+.deleteSection {
+  border-color: rgba(231, 76, 60, 0.4);
+}
+
+.deleteSectionTitle {
+  color: #e74c3c;
+}
+
+.deleteSectionText {
+  font-size: 0.85rem;
+  color: rgba(247, 243, 233, 0.7);
+  margin: 0 0 1.25rem 0;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .detailsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .manageContainer {
+    padding: 1.5rem 1rem;
+  }
+  
+  .headerTitle {
+    font-size: 1.35rem;
+  }
+  
+  .headerSub {
+    font-size: 0.8rem;
+  }
+  
+  .detailsCard {
+    padding: 1.25rem;
+  }
+  
+  .detailsHeader {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .bookingGuestInfo {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .searchFilterRow {
+    flex-direction: column;
+  }
+  
+  .refreshBtn {
+    width: 100%;
+  }
+  
+  .inputField, .textareaField {
+    font-size: 16px;
+    min-height: 46px;
+  }
+  
+  .actionRow {
+    flex-direction: column;
+  }
+  
+  .editBtn, .cancelBtn, .submitBtn, .saveBtn {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .grid2Col {
+    grid-template-columns: 1fr;
+  }
 }
