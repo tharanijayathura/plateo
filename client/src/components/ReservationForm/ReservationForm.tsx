@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useEffect } from 'react';
 import Link from 'next/link';
 import PlateoLogo from '@/components/PlateoLogo/PlateoLogo';
 import { ALL_MENU_ITEMS, MenuItem } from '@/data/menuData';
@@ -95,7 +95,7 @@ const OCCASIONS = [
 ];
 
 export default function ReservationForm() {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Form State
   const [seatingArea, setSeatingArea] = useState<string>('main');
@@ -116,11 +116,40 @@ export default function ReservationForm() {
   const [bookingCode, setBookingCode] = useState<string>('PLT-8492');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Optional Meal & Drink Selection State
+  // Menu & Pre-Order State
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isMenuLoading, setIsMenuLoading] = useState<boolean>(true);
   const [orderedItems, setOrderedItems] = useState<Record<string, number>>({});
-  const [mealCategoryFilter, setMealCategoryFilter] = useState<'all' | 'dinner' | 'lunch' | 'breakfast' | 'desserts' | 'drinks'>('all');
+  const [mealCategoryFilter, setMealCategoryFilter] = useState<string>('ALL');
 
   const formId = useId();
+
+  // Fetch Menu Items on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchMenu = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const res = await fetch(`${API_URL}/api/menu`);
+        const data = await res.json();
+        if (isMounted) {
+          if (data.success && data.data) {
+            setMenuItems(data.data);
+          } else {
+            setMenuItems(ALL_MENU_ITEMS);
+          }
+        }
+      } catch (err) {
+        if (isMounted) setMenuItems(ALL_MENU_ITEMS);
+      } finally {
+        if (isMounted) setIsMenuLoading(false);
+      }
+    };
+    fetchMenu();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const setQuickDate = (daysAhead: number) => {
     const d = new Date();
@@ -151,7 +180,7 @@ export default function ReservationForm() {
   // Convert orderedItems record into structured array for API
   const getStructuredOrderedItems = () => {
     return Object.entries(orderedItems).map(([id, quantity]) => {
-      const item = ALL_MENU_ITEMS.find((m) => m.id === id);
+      const item = menuItems.find((m) => m.id === id) || ALL_MENU_ITEMS.find((m) => m.id === id);
       return {
         id,
         name: item?.name || id,
@@ -170,7 +199,7 @@ export default function ReservationForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateStep3 = () => {
+  const validateStep4 = () => {
     const newErrors: Record<string, string> = {};
     if (!fullName.trim()) newErrors.fullName = 'Please enter your full name';
     if (!email.trim() || !email.includes('@'))
@@ -186,18 +215,20 @@ export default function ReservationForm() {
       setStep(2);
     } else if (step === 2) {
       if (validateStep2()) setStep(3);
+    } else if (step === 3) {
+      setStep(4);
     }
   };
 
   const handlePrevStep = () => {
-    if (step > 1 && step < 4) {
-      setStep((prev) => (prev - 1) as 1 | 2 | 3);
+    if (step > 1 && step <= 4) {
+      setStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep3()) return;
+    if (!validateStep4()) return;
 
     setIsSubmitting(true);
 
@@ -231,7 +262,7 @@ export default function ReservationForm() {
       }
 
       setBookingCode(data.bookingCode);
-      setStep(4);
+      setStep(5);
     } catch {
       alert('Unable to connect to the booking server. Please try again.');
     } finally {
@@ -253,8 +284,8 @@ export default function ReservationForm() {
   const selectedSeatingObj =
     SEATING_OPTIONS.find((s) => s.id === seatingArea) || SEATING_OPTIONS[0];
 
-  const filteredMenuItems = ALL_MENU_ITEMS.filter((item) =>
-    mealCategoryFilter === 'all' ? true : item.category === mealCategoryFilter
+  const filteredMenuItems = menuItems.filter((item) =>
+    mealCategoryFilter === 'ALL' ? true : item.category.toUpperCase() === mealCategoryFilter
   );
 
   const totalPreorderedCount = Object.values(orderedItems).reduce((a, b) => a + b, 0);
@@ -262,7 +293,7 @@ export default function ReservationForm() {
   return (
     <div className={styles.wizardContainer}>
       {/* Banner to Edit or Remove Existing Reservation */}
-      {step < 4 && (
+      {step < 5 && (
         <div style={{
           background: 'rgba(232, 196, 122, 0.08)',
           border: '1px solid rgba(232, 196, 122, 0.25)',
@@ -297,13 +328,13 @@ export default function ReservationForm() {
         </div>
       )}
 
-      {/* Wizard Header Progress Bar (Steps 1 to 3) */}
-      {step < 4 && (
+      {/* Wizard Header Progress Bar */}
+      {step < 5 && (
         <div className={styles.progressHeader}>
           <div className={styles.stepTrack}>
             <div
               className={styles.stepFill}
-              style={{ width: `${((step - 1) / 2) * 100}%` }}
+              style={{ width: `${((step - 1) / 3) * 100}%` }}
             />
           </div>
 
@@ -333,7 +364,17 @@ export default function ReservationForm() {
               }}
             >
               <span className={styles.stepNum}>03</span>
-              <span className={styles.stepTitle}>DETAILS &amp; TASTING</span>
+              <span className={styles.stepTitle}>BROWSE MENU</span>
+            </div>
+
+            <div
+              className={`${styles.stepNode} ${step >= 4 ? styles.stepActive : ''}`}
+              onClick={() => {
+                if (validateStep2() && step >= 3) setStep(4);
+              }}
+            >
+              <span className={styles.stepNum}>04</span>
+              <span className={styles.stepTitle}>DETAILS &amp; CONFIRM</span>
             </div>
           </div>
         </div>
@@ -343,7 +384,7 @@ export default function ReservationForm() {
       {step === 1 && (
         <div className={styles.stepSection}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionPill}>STEP 01 OF 03</span>
+            <span className={styles.sectionPill}>STEP 01 OF 04</span>
             <h3 className={styles.stepHeading}>SELECT SEATING &amp; PARTY SIZE</h3>
             <p className={styles.stepDescription}>
               Choose your preferred dining setting and number of guests for this evening.
@@ -469,7 +510,7 @@ export default function ReservationForm() {
       {step === 2 && (
         <div className={styles.stepSection}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionPill}>STEP 02 OF 03</span>
+            <span className={styles.sectionPill}>STEP 02 OF 04</span>
             <h3 className={styles.stepHeading}>SELECT DATE &amp; DINING TIME</h3>
             <p className={styles.stepDescription}>
               Select your desired evening date and seating time slot.
@@ -562,21 +603,262 @@ export default function ReservationForm() {
               className={styles.nextBtn}
               onClick={handleNextStep}
             >
-              <span>CONTINUE TO DETAILS</span>
+              <span>CONTINUE TO MENU</span>
               <span className={styles.btnArrow}>&rarr;</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* STEP 3: GUEST DETAILS, TASTING & OPTIONAL MEALS/DRINKS */}
+      {/* STEP 3: BROWSE & PRE-ORDER MENU */}
       {step === 3 && (
+        <div className={styles.stepSection} style={{ position: 'relative', paddingBottom: '80px' }}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionPill}>STEP 03 OF 04</span>
+            <h3 className={styles.stepHeading}>BROWSE &amp; PRE-ORDER</h3>
+            <p className={styles.stepDescription}>
+              Explore our culinary offerings and optionally pre-order to skip the wait.
+            </p>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            {['ALL', 'BREAKFAST', 'LUNCH', 'DINNER', 'DESSERTS', 'DRINKS'].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setMealCategoryFilter(cat)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: '24px',
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  border: mealCategoryFilter === cat ? '1px solid #E8C47A' : '1px solid rgba(255,255,255,0.1)',
+                  background: mealCategoryFilter === cat ? 'rgba(232, 196, 122, 0.15)' : 'rgba(255,255,255,0.03)',
+                  color: mealCategoryFilter === cat ? '#E8C47A' : 'rgba(255,255,255,0.6)',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {isMenuLoading ? (
+            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#E8C47A' }}>
+              Loading menu selections...
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '1.5rem',
+              marginBottom: '2rem'
+            }}>
+              {filteredMenuItems.map((item) => {
+                const qty = orderedItems[item.id] || 0;
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      display: 'flex',
+                      background: qty > 0 ? 'rgba(232, 196, 122, 0.05)' : 'rgba(255, 255, 255, 0.03)',
+                      border: qty > 0 ? '1px solid rgba(232, 196, 122, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s',
+                    }}
+                  >
+                    {item.image && (
+                      <div style={{ width: '120px', flexShrink: 0, position: 'relative' }}>
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      </div>
+                    )}
+                    <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                        <h4 style={{ fontFamily: 'Cinzel, serif', color: '#F7F3E9', margin: 0, fontSize: '1.1rem', lineHeight: '1.2' }}>
+                          {item.name}
+                        </h4>
+                        <span style={{ color: '#E8C47A', fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
+                          {item.price}
+                        </span>
+                      </div>
+                      
+                      {item.badge && (
+                        <span style={{ 
+                          fontSize: '0.65rem', 
+                          background: 'rgba(232, 196, 122, 0.15)', 
+                          color: '#E8C47A', 
+                          border: '1px solid rgba(232, 196, 122, 0.3)',
+                          padding: '0.2rem 0.5rem', 
+                          borderRadius: '4px', 
+                          alignSelf: 'flex-start', 
+                          marginTop: '0.4rem', 
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em'
+                        }}>
+                          {item.badge}
+                        </span>
+                      )}
+                      
+                      <p style={{ 
+                        fontSize: '0.8rem', 
+                        color: 'rgba(247, 243, 233, 0.7)', 
+                        margin: '0.6rem 0', 
+                        display: '-webkit-box', 
+                        WebkitLineClamp: 2, 
+                        WebkitBoxOrient: 'vertical', 
+                        overflow: 'hidden',
+                        lineHeight: '1.4'
+                      }}>
+                        {item.description}
+                      </p>
+                      
+                      {item.tastingNote && (
+                        <p style={{ 
+                          fontSize: '0.75rem', 
+                          color: 'rgba(232, 196, 122, 0.8)', 
+                          fontStyle: 'italic', 
+                          margin: '0 0 0.75rem 0' 
+                        }}>
+                          ~ {item.tastingNote}
+                        </p>
+                      )}
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+                          {item.rating && `★ ${item.rating} (${item.reviewCount || 0})`}
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          {qty > 0 && (
+                            <button 
+                              type="button" 
+                              onClick={() => handleItemQuantityChange(item.id, -1)} 
+                              style={{ 
+                                width: '28px', height: '28px', 
+                                borderRadius: '50%', 
+                                border: '1px solid rgba(232, 196, 122, 0.4)', 
+                                background: 'transparent', 
+                                color: '#E8C47A', 
+                                cursor: 'pointer', 
+                                display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                              }}
+                            >
+                              &minus;
+                            </button>
+                          )}
+                          {qty > 0 && (
+                            <span style={{ color: '#F7F3E9', fontWeight: 600, width: '16px', textAlign: 'center' }}>
+                              {qty}
+                            </span>
+                          )}
+                          <button 
+                            type="button" 
+                            onClick={() => handleItemQuantityChange(item.id, 1)} 
+                            style={{ 
+                              width: qty === 0 ? 'auto' : '28px', 
+                              height: '28px', 
+                              padding: qty === 0 ? '0 1rem' : '0', 
+                              borderRadius: qty === 0 ? '20px' : '50%', 
+                              border: '1px solid #E8C47A', 
+                              background: 'rgba(232, 196, 122, 0.1)', 
+                              color: '#E8C47A', 
+                              cursor: 'pointer', 
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                              fontSize: qty === 0 ? '0.75rem' : '1rem', 
+                              fontWeight: 600 
+                            }}
+                          >
+                            {qty === 0 ? 'ADD TO ORDER' : '+'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Floating Summary Bar */}
+          <div style={{ 
+            position: 'absolute', 
+            bottom: 0, 
+            left: 0, 
+            right: 0, 
+            background: 'rgba(14, 11, 8, 0.95)', 
+            borderTop: '1px solid rgba(232, 196, 122, 0.3)', 
+            padding: '1rem 1.5rem', 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            backdropFilter: 'blur(10px)', 
+            zIndex: 10,
+            boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
+            borderBottomLeftRadius: '16px',
+            borderBottomRightRadius: '16px'
+          }}>
+            <div>
+              <div style={{ color: '#F7F3E9', fontWeight: 600, fontSize: '1.1rem' }}>
+                {totalPreorderedCount} Item{totalPreorderedCount !== 1 ? 's' : ''} Selected
+              </div>
+              <div style={{ color: 'rgba(247, 243, 233, 0.6)', fontSize: '0.8rem' }}>
+                Pre-ordering is optional
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                type="button"
+                className={styles.prevBtn}
+                onClick={handlePrevStep}
+                style={{ padding: '0.8rem 1.5rem', margin: 0 }}
+              >
+                &larr; BACK
+              </button>
+              <button 
+                type="button" 
+                onClick={handleNextStep} 
+                style={{ 
+                  background: '#E8C47A', 
+                  color: '#0e0b08', 
+                  border: 'none', 
+                  padding: '0.8rem 1.5rem', 
+                  borderRadius: '8px', 
+                  fontWeight: 700, 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  letterSpacing: '0.05em',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                {totalPreorderedCount === 0 ? 'SKIP — ORDER AT TABLE' : 'CONTINUE WITH SELECTION'}
+                <span>&rarr;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 4: GUEST DETAILS & CONFIRM */}
+      {step === 4 && (
         <form className={styles.stepSection} onSubmit={handleSubmit}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionPill}>STEP 03 OF 03</span>
-            <h3 className={styles.stepHeading}>GUEST DETAILS &amp; TASTING PREFERENCES</h3>
+            <span className={styles.sectionPill}>STEP 04 OF 04</span>
+            <h3 className={styles.stepHeading}>GUEST DETAILS &amp; CONFIRM</h3>
             <p className={styles.stepDescription}>
-              Provide contact info and optionally pre-select meals &amp; beverages for your table.
+              Provide contact info to secure your table and finalize your reservation.
             </p>
           </div>
 
@@ -672,145 +954,6 @@ export default function ReservationForm() {
             </div>
           </div>
 
-          {/* ============================================================ */}
-          {/* OPTIONAL: PRE-SELECT MEALS & DRINKS                          */}
-          {/* ============================================================ */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px solid rgba(232, 196, 122, 0.25)',
-            borderRadius: '10px',
-            padding: '1.25rem',
-            margin: '1.5rem 0',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div>
-                <label className={styles.fieldLabel} style={{ marginBottom: '2px' }}>
-                  PRE-SELECT MEALS &amp; DRINKS (OPTIONAL)
-                </label>
-                <p className={styles.fieldSub} style={{ margin: 0 }}>
-                  Pre-order dishes or drinks for your table, or skip to order in person.
-                </p>
-              </div>
-              <span style={{ fontSize: '0.75rem', color: totalPreorderedCount > 0 ? '#2ecc71' : '#E8C47A', fontWeight: 600 }}>
-                {totalPreorderedCount === 0
-                  ? '✦ Table Only (No Pre-order)'
-                  : `✓ ${totalPreorderedCount} Item(s) Selected`}
-              </span>
-            </div>
-
-            {/* Category Filter Pills */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-              {(['all', 'dinner', 'lunch', 'breakfast', 'desserts', 'drinks'] as const).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setMealCategoryFilter(cat)}
-                  style={{
-                    padding: '0.35rem 0.85rem',
-                    borderRadius: '20px',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    border: mealCategoryFilter === cat ? '1px solid #E8C47A' : '1px solid rgba(255,255,255,0.1)',
-                    background: mealCategoryFilter === cat ? 'rgba(232, 196, 122, 0.15)' : 'transparent',
-                    color: mealCategoryFilter === cat ? '#E8C47A' : 'rgba(255,255,255,0.5)',
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {/* Meal Items Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-              gap: '0.75rem',
-              maxHeight: '300px',
-              overflowY: 'auto',
-              paddingRight: '4px',
-            }}>
-              {filteredMenuItems.map((menuItem) => {
-                const qty = orderedItems[menuItem.id] || 0;
-                return (
-                  <div
-                    key={menuItem.id}
-                    style={{
-                      background: qty > 0 ? 'rgba(232, 196, 122, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                      border: qty > 0 ? '1px solid #E8C47A' : '1px solid rgba(255, 255, 255, 0.06)',
-                      borderRadius: '8px',
-                      padding: '0.75rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '0.5rem',
-                    }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '0.8rem', color: '#F7F3E9', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {menuItem.name}
-                      </div>
-                      <div style={{ fontSize: '0.7rem', color: '#E8C47A', fontWeight: 600 }}>
-                        {menuItem.price}
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      {qty > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleItemQuantityChange(menuItem.id, -1)}
-                          style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(231,76,60,0.4)',
-                            background: 'rgba(231,76,60,0.15)',
-                            color: '#e74c3c',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '12px',
-                          }}
-                        >
-                          &minus;
-                        </button>
-                      )}
-                      {qty > 0 && (
-                        <span style={{ fontSize: '0.8rem', color: '#F7F3E9', fontWeight: 700, minWidth: '16px', textAlign: 'center' }}>
-                          {qty}
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => handleItemQuantityChange(menuItem.id, 1)}
-                        style={{
-                          padding: qty === 0 ? '0.3rem 0.6rem' : '0',
-                          width: qty === 0 ? 'auto' : '24px',
-                          height: '24px',
-                          borderRadius: '4px',
-                          border: '1px solid rgba(232, 196, 122, 0.4)',
-                          background: 'rgba(232, 196, 122, 0.15)',
-                          color: '#E8C47A',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '11px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {qty === 0 ? '+ ADD' : '+'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Special Requests */}
           <div className={styles.formGroupFull}>
             <label className={styles.fieldLabel} htmlFor={`${formId}-requests`}>
@@ -855,8 +998,8 @@ export default function ReservationForm() {
         </form>
       )}
 
-      {/* STEP 4: ANIMATED LUXURY CONFIRMATION PASS */}
-      {step === 4 && (
+      {/* STEP 5: ANIMATED LUXURY CONFIRMATION PASS */}
+      {step === 5 && (
         <div className={styles.confirmationWrapper}>
           <div className={styles.ticketCard}>
             {/* Ticket Top Banner */}
